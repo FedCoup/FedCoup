@@ -1,0 +1,636 @@
+{
+  "contract_name": "FedCoup",
+  "abi": [
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "mintingFinished",
+      "outputs": [
+        {
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "payable": false,
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "_spender",
+          "type": "address"
+        },
+        {
+          "name": "_value",
+          "type": "uint256"
+        }
+      ],
+      "name": "approve",
+      "outputs": [],
+      "payable": false,
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "_to",
+          "type": "address"
+        },
+        {
+          "name": "_value",
+          "type": "uint256"
+        }
+      ],
+      "name": "transferResidualBcoupons",
+      "outputs": [],
+      "payable": false,
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "totalSupply",
+      "outputs": [
+        {
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "_from",
+          "type": "address"
+        },
+        {
+          "name": "_to",
+          "type": "address"
+        },
+        {
+          "name": "_value",
+          "type": "uint256"
+        }
+      ],
+      "name": "transferFrom",
+      "outputs": [],
+      "payable": false,
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "residualBcoupons",
+      "outputs": [
+        {
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [
+        {
+          "name": "_owner",
+          "type": "address"
+        }
+      ],
+      "name": "balanceOf_B_coupons",
+      "outputs": [
+        {
+          "name": "Bbalance",
+          "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "_to",
+          "type": "address"
+        },
+        {
+          "name": "_amount",
+          "type": "uint256"
+        }
+      ],
+      "name": "mint",
+      "outputs": [
+        {
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "payable": false,
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [
+        {
+          "name": "_owner",
+          "type": "address"
+        }
+      ],
+      "name": "balanceOf_S_coupons",
+      "outputs": [
+        {
+          "name": "Sbalance",
+          "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [
+        {
+          "name": "_owner",
+          "type": "address"
+        }
+      ],
+      "name": "balanceOf",
+      "outputs": [
+        {
+          "name": "balance",
+          "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [],
+      "name": "finishMinting",
+      "outputs": [
+        {
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "payable": false,
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "_to",
+          "type": "address"
+        },
+        {
+          "name": "_value",
+          "type": "uint256"
+        }
+      ],
+      "name": "transferBcoupons",
+      "outputs": [],
+      "payable": false,
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "owner",
+      "outputs": [
+        {
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "payable": false,
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "_FCC",
+          "type": "uint256"
+        }
+      ],
+      "name": "createCoupons",
+      "outputs": [],
+      "payable": false,
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "_from",
+          "type": "address"
+        },
+        {
+          "name": "_Bcoupons",
+          "type": "uint256"
+        }
+      ],
+      "name": "accept_B_coupons",
+      "outputs": [
+        {
+          "name": "success",
+          "type": "bool"
+        }
+      ],
+      "payable": false,
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "_to",
+          "type": "address"
+        },
+        {
+          "name": "_value",
+          "type": "uint256"
+        }
+      ],
+      "name": "transfer",
+      "outputs": [],
+      "payable": false,
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [
+        {
+          "name": "_owner",
+          "type": "address"
+        },
+        {
+          "name": "_spender",
+          "type": "address"
+        }
+      ],
+      "name": "allowance",
+      "outputs": [
+        {
+          "name": "remaining",
+          "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "newOwner",
+          "type": "address"
+        }
+      ],
+      "name": "transferOwnership",
+      "outputs": [],
+      "payable": false,
+      "type": "function"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "name": "owner",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "name": "Scoupons",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "name": "Bcoupons",
+          "type": "uint256"
+        }
+      ],
+      "name": "CouponsCreated",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "name": "from",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "name": "to",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "name": "value",
+          "type": "uint256"
+        }
+      ],
+      "name": "Accept_B_coupons",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "name": "from",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "name": "to",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "name": "value",
+          "type": "uint256"
+        }
+      ],
+      "name": "Transfer_B_coupons",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "name": "from",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "name": "to",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "name": "value",
+          "type": "uint256"
+        }
+      ],
+      "name": "TransferResidual_B_coupons",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "name": "to",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "name": "value",
+          "type": "uint256"
+        }
+      ],
+      "name": "Mint",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [],
+      "name": "MintFinished",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "name": "owner",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "name": "spender",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "name": "value",
+          "type": "uint256"
+        }
+      ],
+      "name": "Approval",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "name": "from",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "name": "to",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "name": "value",
+          "type": "uint256"
+        }
+      ],
+      "name": "Transfer",
+      "type": "event"
+    }
+  ],
+  "unlinked_binary": "0x60606040526003805460a060020a60ff0219169055600060048190556005555b60038054600160a060020a03191633600160a060020a03161790555b5b610d148061004b6000396000f300606060405236156100e05763ffffffff60e060020a60003504166305d2035b81146100e2578063095ea7b31461010657806314930d7e1461012757806318160ddd1461014857806323b872dd1461016a57806323fec5a9146101915780633c97b475146101b357806340c10f19146101e157806344c635fa1461021457806370a08231146102425780637d64bcb4146102705780638318e40b146102945780638da5cb5b146102b5578063959ca192146102e15780639ab1416c146102f6578063a9059cbb14610329578063dd62ed3e1461034a578063f2fde38b1461037e575bfe5b34156100ea57fe5b6100f261039c565b604080519115158252519081900360200190f35b341561010e57fe5b610125600160a060020a03600435166024356103ac565b005b341561012f57fe5b610125600160a060020a036004351660243561040e565b005b341561015057fe5b6101586104da565b60408051918252519081900360200190f35b341561017257fe5b610125600160a060020a03600435811690602435166044356104e0565b005b341561019957fe5b6101586105da565b60408051918252519081900360200190f35b34156101bb57fe5b610158600160a060020a03600435166105e0565b60408051918252519081900360200190f35b34156101e957fe5b6100f2600160a060020a03600435166024356105ff565b604080519115158252519081900360200190f35b341561021c57fe5b610158600160a060020a03600435166106d3565b60408051918252519081900360200190f35b341561024a57fe5b610158600160a060020a03600435166106f2565b60408051918252519081900360200190f35b341561027857fe5b6100f2610711565b604080519115158252519081900360200190f35b341561029c57fe5b610125600160a060020a0360043516602435610777565b005b34156102bd57fe5b6102c5610845565b60408051600160a060020a039092168252519081900360200190f35b34156102e957fe5b610125600435610854565b005b34156102fe57fe5b6100f2600160a060020a0360043516602435610a14565b604080519115158252519081900360200190f35b341561033157fe5b610125600160a060020a0360043516602435610adb565b005b341561035257fe5b610158600160a060020a0360043581169060243516610b97565b60408051918252519081900360200190f35b341561038657fe5b610125600160a060020a0360043516610bc4565b005b60035460a060020a900460ff1681565b600160a060020a03338116600081815260026020908152604080832094871680845294825291829020859055815185815291517f8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b9259281900390910190a35b5050565b6040604436101561041f5760006000fd5b60035433600160a060020a0390811691161461043b5760006000fd5b60055461044e908363ffffffff610c1016565b600555600160a060020a03831660009081526007602052604090205461047a908363ffffffff610c2916565b600160a060020a038085166000818152600760209081526040918290209490945580518681529051919333909316927fdfb5087ede612f6dad6449d9a0b009a71a52576f6d6df9f5080cf73cb660d1d292918290030190a35b5b5b505050565b60045481565b600160a060020a038084166000908152600260209081526040808320338516845282528083205493861683526001909152902054610524908363ffffffff610c2916565b600160a060020a038085166000908152600160205260408082209390935590861681522054610559908363ffffffff610c1016565b600160a060020a038516600090815260016020526040902055610582818363ffffffff610c1016565b600160a060020a03808616600081815260026020908152604080832033861684528252918290209490945580518681529051928716939192600080516020610cc9833981519152929181900390910190a35b50505050565b60055481565b600160a060020a0381166000908152600760205260409020545b919050565b60035460009033600160a060020a0390811691161461061e5760006000fd5b60035460a060020a900460ff16156106365760006000fd5b600454610649908363ffffffff610c2916565b600455600160a060020a038316600090815260016020526040902054610675908363ffffffff610c2916565b600160a060020a038416600081815260016020908152604091829020939093558051858152905191927f0f6798a560793a54c3bcfe86a93cde1e73087d944c0ea20544137d412139688592918290030190a25060015b5b5b92915050565b600160a060020a0381166000908152600660205260409020545b919050565b600160a060020a0381166000908152600160205260409020545b919050565b60035460009033600160a060020a039081169116146107305760006000fd5b6003805460a060020a60ff02191660a060020a1790556040517fae5184fba832cb2b1f702aca6117b8d265eaf03ad33eb133f19dde0f5920fa0890600090a15060015b5b90565b604060443610156107885760006000fd5b600160a060020a0333166000908152600760205260409020546107b1908363ffffffff610c1016565b600160a060020a0333811660009081526007602052604080822093909355908516815220546107e6908363ffffffff610c2916565b600160a060020a038085166000818152600760209081526040918290209490945580518681529051919333909316927fbce795cd1f8f77a31569c7cc9f88aac58766fadcc5a7785ec1f069f680843a1c92918290030190a35b5b505050565b600354600160a060020a031681565b60008080808080806040604436101561086d5760006000fd5b600160a060020a033316600090815260016020526040902054610896908a63ffffffff610c1016565b600160a060020a0333166000908152600160209081526040808320939093556006905220548998506108ce908963ffffffff610c2916565b600160a060020a03331660009081526006602081815260408084208590556007825290922054915297509550889450849350839250610913878463ffffffff610c2916565b9650610925868563ffffffff610c2916565b9550600087111561098257610940878763ffffffff610c4516565b9150600182116109825761095a828663ffffffff610c8816565b925061097e61096f868563ffffffff610c1016565b6005549063ffffffff610c2916565b6005555b5b5b600160a060020a0333166000908152600760205260409020546109ad908463ffffffff610c2916565b600160a060020a0333166000818152600760209081526040918290209390935580518b8152928301869052805191927f0a595f56b76a18768cd6a9c4a10aae9bda1c57b72c3725990067e7de7eee8940929081900390910190a25b5b505050505050505050565b600160a060020a038216600090815260066020526040812054610a3d908363ffffffff610c1016565b600160a060020a0380851660009081526006602090815260408083209490945533909216815260019091522054610a7a908363ffffffff610c2916565b600160a060020a0333811660008181526001602090815260409182902094909455805186815290519193928716927f39df281d50d678e77baec7aa9e747d12d28ed9a4f9e2beb94950bfcee10b93ea92918290030190a35060015b92915050565b60406044361015610aec5760006000fd5b600160a060020a033316600090815260016020526040902054610b15908363ffffffff610c1016565b600160a060020a033381166000908152600160205260408082209390935590851681522054610b4a908363ffffffff610c2916565b600160a060020a03808516600081815260016020908152604091829020949094558051868152905191933390931692600080516020610cc983398151915292918290030190a35b5b505050565b600160a060020a038083166000908152600260209081526040808320938516835292905220545b92915050565b60035433600160a060020a03908116911614610be05760006000fd5b600160a060020a03811615610c0b5760038054600160a060020a031916600160a060020a0383161790555b5b5b50565b6000610c1e83831115610cb7565b508082035b92915050565b6000828201610c3a84821015610cb7565b8091505b5092915050565b60006000610c5560008411610cb7565b8284811515610c6057fe5b049050610c3a8385811515610c7157fe5b06828502018514610cb7565b8091505b5092915050565b6000828202610c3a841580610ca75750838583811515610ca457fe5b04145b610cb7565b8091505b5092915050565b801515610c0b5760006000fd5b5b505600ddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3efa165627a7a72305820a9e4274d9da7117e1a5b93a41610509688d23b8366e13645cbb9106e0de1dc460029",
+  "networks": {
+    "1499549452730": {
+      "events": {
+        "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "from",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "name": "to",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "value",
+              "type": "uint256"
+            }
+          ],
+          "name": "Transfer",
+          "type": "event"
+        },
+        "0xcc16f5dbb4873280815c1ee09dbd06736cffcc184412cf7a71a0fdb75d397ca5": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "from",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "value",
+              "type": "uint256"
+            }
+          ],
+          "name": "Burn",
+          "type": "event"
+        },
+        "0x9d82aac5c0bed9ed24ff524571bca81e37d0323c14640325492c5f817443a728": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "from",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "value",
+              "type": "uint256"
+            }
+          ],
+          "name": "TransferBtoken",
+          "type": "event"
+        }
+      },
+      "links": {},
+      "address": "0xf90b643b885d6d089774156b18cbd6d2fb194d22",
+      "updated_at": 1499564857073
+    },
+    "1499738633037": {
+      "events": {
+        "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "from",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "name": "to",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "value",
+              "type": "uint256"
+            }
+          ],
+          "name": "Transfer",
+          "type": "event"
+        },
+        "0xcc16f5dbb4873280815c1ee09dbd06736cffcc184412cf7a71a0fdb75d397ca5": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "from",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "value",
+              "type": "uint256"
+            }
+          ],
+          "name": "Burn",
+          "type": "event"
+        },
+        "0x9d82aac5c0bed9ed24ff524571bca81e37d0323c14640325492c5f817443a728": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "from",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "value",
+              "type": "uint256"
+            }
+          ],
+          "name": "TransferBtoken",
+          "type": "event"
+        },
+        "0x0f6798a560793a54c3bcfe86a93cde1e73087d944c0ea20544137d4121396885": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "to",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "value",
+              "type": "uint256"
+            }
+          ],
+          "name": "Mint",
+          "type": "event"
+        },
+        "0xae5184fba832cb2b1f702aca6117b8d265eaf03ad33eb133f19dde0f5920fa08": {
+          "anonymous": false,
+          "inputs": [],
+          "name": "MintFinished",
+          "type": "event"
+        },
+        "0x8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b925": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "owner",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "name": "spender",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "value",
+              "type": "uint256"
+            }
+          ],
+          "name": "Approval",
+          "type": "event"
+        }
+      },
+      "links": {},
+      "address": "0xcbbe75a841488c8c2895238e434f87e3bb1e3e10",
+      "updated_at": 1499739172597
+    }
+  },
+  "schema_version": "0.0.5",
+  "updated_at": 1499912326209
+}
