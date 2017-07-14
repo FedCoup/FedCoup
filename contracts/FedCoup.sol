@@ -7,7 +7,7 @@ contract FedCoup is MintableToken {
     using SafeMath for uint;
 
     /* residual B coupons which accumulated over the period due to B coupon distribution */
-    uint public residualBcoupons = 0;
+    uint residualBcoupons = 0;
 
     /* balance of S coupons for each address */
     mapping (address => uint) balance_S_coupons;
@@ -74,6 +74,7 @@ contract FedCoup is MintableToken {
         CouponsCreated(msg.sender, createdScoupons, createdBcoupons);
     }
 
+
     /*
     * Accept B coupons.
     */
@@ -125,4 +126,12 @@ contract FedCoup is MintableToken {
     function balanceOf_B_coupons(address _owner) constant returns (uint Bbalance) {
         return balance_B_coupons[_owner];
     }    
+
+    /*
+    * Get balance of residual B coupons.
+    */
+    function getBalanceOfResidualBcoupons() constant returns(uint residualBcoupons) {
+        return residualBcoupons;
+    }
+
 }
