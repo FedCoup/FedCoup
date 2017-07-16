@@ -47,10 +47,18 @@ contract('FedCoup', function(accounts) {
     }).catch(function(error) {
       if(error.toString().indexOf("invalid opcode") != -1) {
         assert(true, "Throw expected when transfer B coupons when 0 B balance");
-        //accounts[0] and accounts[1] B balance should be 0
-        var instance = FedCoup.deployed(); 
-        assert.equal(instance.balanceOf_B_coupons.call(accounts[0]).valueOf(), 0, "account[0] - 0 wasn't in the B coupons after with initial 0 B balance");
-        //assert.equal(instance.balanceOf_B_coupons.call(accounts[1]).valueOf(), 0, "account[1] - 0 wasn't in the B coupons after with initial 0 B balance");
+        //accounts[0] B balance should be 0
+        FedCoup.deployed().then(function(instance) {
+          return instance.balanceOf_B_coupons.call(accounts[0]);
+        }).then(function( Bbalance ) {
+          assert.equal(Bbalance.valueOf(), 0, "account[0] - 0 wasn't in the B coupons after with initial 0 B balance");  
+        });
+        //accounts[1] B balance should be 0
+        FedCoup.deployed().then(function(instance) {
+          return instance.balanceOf_B_coupons.call(accounts[1]);
+        }).then(function( Bbalance ) {
+          assert.equal(Bbalance.valueOf(), 0, "account[1] - 0 wasn't in the B coupons after with initial 0 B balance");  
+        });
       } else {
         // if the error is something else (e.g., the assert from previous promise), then we fail the test
         assert(false, error.toString());
@@ -58,6 +66,54 @@ contract('FedCoup', function(accounts) {
     });
   });
 
+  /* test accept B coupons for initial condition */
+  it("accept 1B coupons should throw exception if 0 B balance in beneficiary account", function() {
+    return FedCoup.deployed().then(function(instance) {
+      return instance.accept_B_coupons.call(accounts[1], 1);
+    }).then(function( returnValue ) {
+      assert(false, "Throw expected when accept B coupons when 0 B balance in beneficiary account");
+    }).catch(function( error ) {
+      if(error.toString().indexOf("invalid opcode") != -1) {
+        assert(true, "Throw expected when accept B coupons when 0 B balance in beneficiary account");
+        //accounts[0] B balance should be 0
+        FedCoup.deployed().then(function(instance) {
+          return instance.balanceOf_B_coupons.call(accounts[0]);
+        }).then(function( Bbalance ) {
+          assert.equal(Bbalance.valueOf(), 0, "account[0] - 0 wasn't in the B coupons after with initial 0 B balance");  
+        });
+        //accounts[0] S balance should be 0
+        FedCoup.deployed().then(function(instance) {
+          return instance.balanceOf_S_coupons.call(accounts[0]);
+        }).then(function( Sbalance ) {
+          assert.equal(Sbalance.valueOf(), 0, "account[0] - 0 wasn't in the S coupons after with initial 0 S balance");  
+        });    
+        //accounts[0] FCC balance should be 0
+        FedCoup.deployed().then(function(instance) {
+          return instance.balanceOf.call(accounts[0]);
+        }).then(function( FCCbalance ) {
+          assert.equal(FCCbalance.valueOf(), 0, "account[0] - 0 wasn't in the account after with initial 0 FCC balance");  
+        });            
+        //accounts[1] B balance should be 0
+        FedCoup.deployed().then(function(instance) {
+          return instance.balanceOf_B_coupons.call(accounts[1]);
+        }).then(function( Bbalance ) {
+          assert.equal(Bbalance.valueOf(), 0, "account[1] - 0 wasn't in the B coupons after with initial 0 B balance");  
+        });
+      } else {
+        // if the error is something else (e.g., the assert from previous promise), then we fail the test
+        assert(false, error.toString());
+      }
+    });
+  });  
+
+  /* test residual B coupons initialization */
+  it("create coupons should print", function() {
+    return FedCoup.deployed().then(function(instance) {
+      return instance.getBalanceOfResidualBcoupons.call();
+    }).then(function( residualBcoupons ) {
+      assert.equal(residualBcoupons.valueOf(), 0, "0 wasn't in the residual B coupons for first time");
+    });
+  });
 
 
   /* test transfer B coupons first time */

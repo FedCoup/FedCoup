@@ -1,0 +1,45 @@
+{
+  "contract_name": "FCCPriceDefault",
+  "abi": [
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "FCC_price",
+      "outputs": [
+        {
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "getFCCPrice",
+      "outputs": [
+        {
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "name": "defaultFCCPrice",
+          "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "type": "constructor"
+    }
+  ],
+  "unlinked_binary": "0x6060604052662386f26fc10000600055341561001757fe5b6040516020806100e083398101604052515b60018190555b505b60a18061003f6000396000f300606060405263ffffffff60e060020a6000350416630b34cebf8114602a578063d173ede3146049575bfe5b3415603157fe5b60376068565b60408051918252519081900360200190f35b3415605057fe5b6037606e565b60408051918252519081900360200190f35b60005481565b6001545b905600a165627a7a7230582027bfd2daddd78ff61f20c6d74987fcda76daec41715e47d813ca87679d78323c0029",
+  "networks": {},
+  "schema_version": "0.0.5",
+  "updated_at": 1500161276584
+}
