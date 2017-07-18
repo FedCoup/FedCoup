@@ -33,13 +33,24 @@ contract FedCoup is MintableToken {
     */
     uint256 constant constant_coupon_price = 10 finney;  
 
-    /* residual B coupons which accumulated over the period due to B coupon distribution */
+    /* 
+    * residual B coupons which accumulated over the period due to B coupon transfers.
+    */
     uint residualBcoupons = 0;
 
-    /* balance of S coupons for each address */
+    /* 
+    * residual S coupons which accumulated over the period due to B coupon transfers.
+    */
+    uint residualScoupons = 0;
+
+    /* 
+    * balance of S coupons for each address 
+    */
     mapping (address => uint) balance_S_coupons;
     
-    /* balance of B coupons for each address */
+    /* 
+    * balance of B coupons for each address 
+    */
     mapping (address => uint) balance_B_coupons;
     
     /* 
@@ -49,17 +60,54 @@ contract FedCoup is MintableToken {
     */
     FCCPrice _fCCPriceFunction;
 
-    /* event to log coupon creation */
-    event CouponsCreated(address indexed owner, uint Scoupons, uint Bcoupons);
+    /*
+    * Cost of B coupon (in percentage) when transfer to other user.  
+    * This cost necessary, otherwise B coupon will go on circulation loop and it might go on in own curreny mode. 
+    * Using this cost, B coupon crunched back to the system if transfer happens continuously without accepting coupons.
+    */
+    uint TransferCostBcoupon = 1;
 
-    /* event to log accepted B coupons */
+    /*
+    * Cost of S coupon (in percentage) when transfer to other user.  
+    * This cost necessary to motivate users to sell products (with coupons) instead of transfering S coupons.
+    * Using this cost, S coupon crunched back to the system if transfer happens continuously without accepting coupons.
+    */
+    uint TransferCostScoupon = 1;
+
+    /* 
+    * event to log coupon creation.
+    */
+    event CouponsCreated(address indexed owner, uint Bcoupons, uint Scoupons);
+
+    /* 
+    * event to log accepted B coupons.
+    */
     event Accept_B_coupons(address indexed from, address indexed to, uint value);
    
-    /* event to log B coupons transfer */
+    /* 
+    * event to log accepted S coupons.
+    */
+    event Accept_S_coupons(address indexed from, address indexed to, uint value);
+
+    /* 
+    * event to log B coupons transfer. 
+    */
     event Transfer_B_coupons(address indexed from, address indexed to, uint value);
 
-    /* event to log residual B coupons transfer */
+    /* 
+    * event to log B coupons transfer. 
+    */
+    event Transfer_S_coupons(address indexed from, address indexed to, uint value);
+
+    /* 
+    * event to log residual B coupons transfer.
+    */
     event TransferResidual_B_coupons(address indexed from, address indexed to, uint value);
+
+    /* 
+    * event to log residual S coupons transfer.
+    */
+    event TransferResidual_S_coupons(address indexed from, address indexed to, uint value);
 
     /*
     * FedCoup Constructor.
@@ -70,18 +118,15 @@ contract FedCoup is MintableToken {
 
     /* 
     * Create tokens for given FCC. 
+    *         _FCC : given FedCoup curreny (1FCC equal to 1 ether with respect to number format)
     */
     function createCoupons(uint _FCC) onlyPayloadSize(2 * 32) {
 
         /* subtract given FCC from sender FCC balance */
         balances[msg.sender] = balances[msg.sender].sub( _FCC );
         
-        /* get current coupon counts from sender */
-        uint currentBcoupons = balance_B_coupons[msg.sender];
-        uint currentScoupons = balance_S_coupons[msg.sender];
-
         /* 
-        *  ideal B coupon creation for given _FCC 
+        *  B coupon creation for given _FCC 
         *  
         *  Formula: number of B coupons =
         *  
@@ -89,10 +134,10 @@ contract FedCoup is MintableToken {
         *          --------------------------      
         *            constant_coupon_price  
         */
-        uint  idealBcoupons = _FCC.mul( _fCCPriceFunction.getFCCPrice() ).div( constant_coupon_price );
+        uint  newBcoupons = _FCC.mul( _fCCPriceFunction.getFCCPrice() ).div( constant_coupon_price );
 
         /* 
-        *  ideal S coupon creation for given _FCC 
+        *  S coupon creation for given _FCC 
         * 
         *  Formula: number of S coupons =
         * 
@@ -100,75 +145,22 @@ contract FedCoup is MintableToken {
         *        ---------------------------   
         *          constant_coupon_price
         */
-        uint  idealScoupons = _FCC.mul( _fCCPriceFunction.getFCCPrice() ).div( constant_coupon_price );
+        uint  newScoupons = _FCC.mul( _fCCPriceFunction.getFCCPrice() ).div( constant_coupon_price );
+
 
         /* 
-        * assign ideal B coupons to calculatedBcoupons.
-        * If B coupon distribution >= 1 or <= 2, then this ideal coupon direclty goes to the user account.
+        * add new coupons with existing coupon balance 
         */
-        uint calculatedBcoupons = idealBcoupons;
-
-        /* 
-        * add ideal coupons with current coupons 
-        */
-        uint idealTotalBcoupons = currentBcoupons.add( idealBcoupons );
-        uint idealTotalScoupons = currentScoupons.add( idealScoupons );
-
-        if ( idealTotalBcoupons > 0 ) {
-            /* 
-            * BCouponDist = (currentBcoupons + idealBcoupons)/ (currentScoupons + idealScoupons))
-            */
-            uint BCouponDist = idealTotalBcoupons.div(idealTotalScoupons);
-            /* if B coupon distribution < 1, then multiply with ideal B coupons */
-            if ( BCouponDist < 1 ) {
-                /*
-                * calculatedBcoupons = BCouponDist*idealBcoupons; 
-                */
-                calculatedBcoupons = BCouponDist.mul( idealBcoupons );
-                /* 
-                * add remaining B coupons which is part of ideal B coupons but not added to the calculated B coupons (which direclty goes to the user account) 
-                */
-                residualBcoupons = residualBcoupons.add(idealBcoupons.sub(calculatedBcoupons));
-            } else if ( BCouponDist > 2 ) {
-                /* 
-                * if B coupon distribution > 2, then following formula will be applied
-                * 
-                * Formula:  calculatedBcoupons = 
-                *    |    (currentBcoupons + idealBcoupons)                                      |
-                *    |  ------------------------------------------------------------------------ | * idealBcoupons
-                *    |    (currentBcoupons + idealBcoupons) - (currentScoupons + idealScoupons)  |         
-                */
-                BCouponDist = idealTotalBcoupons.div( idealTotalBcoupons.sub(idealTotalScoupons) );
-                calculatedBcoupons = BCouponDist.mul( idealBcoupons );
-            }             
-        } else {
-            /*
-            * if ideal total B coupons is 0, then user don't have any balance coupons in the account and user passing 0 as the given FCC.
-            * otherwise throw.
-            */
-            if (idealTotalBcoupons > 0 || idealScoupons > 0 ) {
-                throw;
-            }
-            
-        }
-  
-        /* 
-        * add created B coupons to sender 
-        */
-        balance_B_coupons[msg.sender] = balance_B_coupons[msg.sender].add( calculatedBcoupons );
-
-        /* 
-        * add ideal S coupons to sender 
-        */
-        balance_S_coupons[msg.sender] = balance_S_coupons[msg.sender].add( idealScoupons );
+        balance_B_coupons[msg.sender] = balance_B_coupons[msg.sender].add( newBcoupons );
+        balance_S_coupons[msg.sender] = balance_S_coupons[msg.sender].add( newScoupons );
 
         /* log event */
-        CouponsCreated(msg.sender, idealScoupons, calculatedBcoupons);
+        CouponsCreated(msg.sender, newBcoupons, newScoupons);
     }
 
 
     /*
-    * Accept B coupons.
+    * accept B coupons.
     */
     function accept_B_coupons(address _from, uint _Bcoupons) onlyPayloadSize(2 * 32) {
         
@@ -185,27 +177,96 @@ contract FedCoup is MintableToken {
         Accept_B_coupons(_from, msg.sender, _Bcoupons);        
     }
 
-    /* Transfer B coupons. 
-    *
+    /* 
+    * Transfer B coupons. 
+    *       _to: To address where B coupons has to be send
+    *       _numberOfBcoupons: number of B coupons (1 coupon equal to 1 ether)
     */
-    function transferBcoupons(address _to, uint _value) onlyPayloadSize(2 * 32) {
-        balance_B_coupons[msg.sender] = balance_B_coupons[msg.sender].sub(_value);
-        balance_B_coupons[_to] = balance_B_coupons[_to].add(_value);
-        /* log event */
-        Transfer_B_coupons(msg.sender, _to, _value);
+    function transferBcoupons(address _to, uint _numberOfBcoupons) onlyPayloadSize(2 * 32) {
+
+        /*
+        * substract _numberOfBcoupons from sender account.
+        */
+        balance_B_coupons[msg.sender] = balance_B_coupons[msg.sender].sub(_numberOfBcoupons);
+
+        /*
+        * calculate transfer cost.
+        * Formula:
+        *            transferCost = (1/100) * _numberOfBcoupons 
+        */
+        uint transferCost =  _numberOfBcoupons.div( 100 ).mul(TransferCostBcoupon);
+
+        /*
+        * add transfer cost to residual B coupons.
+        */
+        residualBcoupons = residualBcoupons.add(transferCost);
+
+        /*
+        * subtract transfer cost from given _numberOfBcoupons and add it to the TO account.
+        */
+        balance_B_coupons[_to] = balance_B_coupons[_to].add( _numberOfBcoupons.sub(transferCost) );
+
+        /* 
+        * log event 
+        */
+        Transfer_B_coupons(msg.sender, _to, _numberOfBcoupons);
+    }
+
+    /* 
+    * Transfer S coupons. 
+    */
+    function transferScoupons(address _to, uint _numberOfScoupons) onlyPayloadSize(2 * 32) {
+
+        /*
+        * substract _numberOfScoupons from sender account.
+        */
+        balance_S_coupons[msg.sender] = balance_S_coupons[msg.sender].sub(_numberOfScoupons);
+
+        /*
+        * calculate transfer cost.
+        * Formula:
+        *            transferCost = (1/100) * _numberOfScoupons 
+        */
+        uint transferCost =  _numberOfScoupons.div( 100 ).mul(TransferCostScoupon);
+
+        /*
+        * add transfer cost to residual S coupons.
+        */
+        residualScoupons = residualScoupons.add(transferCost);
+
+        /*
+        * subtract transfer cost from given _numberOfBcoupons and add it to the TO account.
+        */
+        balance_S_coupons[_to] = balance_S_coupons[_to].add(_numberOfScoupons.sub(transferCost));
+
+        /* 
+        * log event.
+        */
+        Transfer_S_coupons(msg.sender, _to, _numberOfScoupons);
     }
 
     /*
     * Transfer residual B coupons to entities which integrates FedCoup. 
     * It's investment on entities to integrate FedCoup on their sales lifecycle. 
     */
-    function transferResidualBcoupons(address _to, uint _value) onlyPayloadSize(2 * 32) onlyOwner {
-        residualBcoupons = residualBcoupons.sub(_value);
-        balance_B_coupons[_to] = balance_B_coupons[_to].add(_value);
+    function transferResidualBcoupons(address _to, uint _numberOfBcoupons) onlyPayloadSize(2 * 32) onlyOwner {
+        residualBcoupons = residualBcoupons.sub(_numberOfBcoupons);
+        balance_B_coupons[_to] = balance_B_coupons[_to].add(_numberOfBcoupons);
         /* log event */
-        TransferResidual_B_coupons(msg.sender, _to, _value);
+        TransferResidual_B_coupons(msg.sender, _to, _numberOfBcoupons);
     } 
  
+    /*
+    * Transfer residual B coupons to entities which integrates FedCoup. 
+    * It's investment on entities to integrate FedCoup on their sales lifecycle. 
+    */
+    function transferResidualScoupons(address _to, uint _numberOfScoupons) onlyPayloadSize(2 * 32) onlyOwner {
+        residualScoupons = residualScoupons.sub(_numberOfScoupons);
+        balance_S_coupons[_to] = balance_S_coupons[_to].add(_numberOfScoupons);
+        /* log event */
+        TransferResidual_B_coupons(msg.sender, _to, _numberOfScoupons);
+    } 
+
     /*
     * Get balance of S coupons.
     */
@@ -237,5 +298,5 @@ contract FedCoup is MintableToken {
     /*
     * 
     */
-    function 
+    
 }
