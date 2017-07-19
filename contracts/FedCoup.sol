@@ -161,20 +161,37 @@ contract FedCoup is MintableToken {
 
     /*
     * accept B coupons.
+    *      _from : address of the coupon giver.
+    *      _numberOfBcoupons : number of B coupons (1B coupon equal to 1 ether with respect to format)
     */
-    function accept_B_coupons(address _from, uint _Bcoupons) onlyPayloadSize(2 * 32) {
+    function accept_B_coupons(address _from, uint _numberOfBcoupons) onlyPayloadSize(2 * 32) {
         
-        /* substract B coupons from the beneficiary account */
-        balance_B_coupons[_from] = balance_B_coupons[_from].sub( _Bcoupons );
+        /* 
+        * substract B coupons from the giver account.
+        */
+        balance_B_coupons[_from] = balance_B_coupons[_from].sub( _numberOfBcoupons );
 
-        /* substract equivalent S coupons from message sender(coupon acceptor) account */
-        balance_S_coupons[msg.sender] = balance_S_coupons[msg.sender].sub( _Bcoupons );
+        /* 
+        * substract equivalent S coupons from message sender(coupon acceptor) account.
+        */
+        balance_S_coupons[msg.sender] = balance_S_coupons[msg.sender].sub( _numberOfBcoupons );
     
-        /* convert accepted B coupons into FCC equivalent and add it to sender balance */
-        balances[msg.sender] = balances[msg.sender].add( _Bcoupons );
+        /* 
+        * convert accepted B coupons into FCC equivalent and add it to sender balance.
+        * 
+        *  Formula: FCC =
+        *  
+        *           (_numberOfBcoupons * constant_coupon_price)
+        *          ---------------------------------------------      
+        *                           FCC price  
+        *            
+        */
+        balances[msg.sender] = balances[msg.sender].add( _numberOfBcoupons );
         
-        /* log event */
-        Accept_B_coupons(_from, msg.sender, _Bcoupons);        
+        /* 
+        * log event. 
+        */
+        Accept_B_coupons(_from, msg.sender, _numberOfBcoupons);        
     }
 
     /* 
