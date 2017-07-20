@@ -1,11 +1,11 @@
 pragma solidity ^0.4.4;
 
 /*
-* FCC (FedCoup currency) price in USD.
+* FCC (FedCoup token) price in USD.
 */
 contract FCCPrice {
 
-    uint public FCC_price = 10 finney; 
+    uint public FCC_price; 
 
     /*
     * Get FCC price in USD.

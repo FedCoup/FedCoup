@@ -1,6 +1,8 @@
 pragma solidity ^0.4.4;
 import "./FCCPrice.sol";
 import "./FCCPriceDefault.sol";
+import "./CouponCostFunctionDefault.sol";
+import "./ResidualCouponDistDefault.sol";
 import "zeppelin/token/MintableToken.sol";
 
 /*
@@ -22,7 +24,7 @@ contract FedCoup is MintableToken {
 
     uint public decimals = 18;
 
-    /* default FCC (fedcoup currency) value as 0.01 USD.  
+    /* default FCC (fedcoup token) value as 0.01 USD.  
      * This default value will be used until FCC price ticker available in the exchanges. 
      * If price ticker available, in the next version, the method will be included to pull price data from available exchanges and average of them will be assigned to this variable.
      */
@@ -32,16 +34,6 @@ contract FedCoup is MintableToken {
     * constant S,B coupon (federation coupon) price as 0.01 USD. 
     */
     uint256 constant constant_coupon_price = 10 finney;  
-
-    /* 
-    * residual B coupons which accumulated over the period due to B coupon transfers.
-    */
-    uint residualBcoupons = 0;
-
-    /* 
-    * residual S coupons which accumulated over the period due to B coupon transfers.
-    */
-    uint residualScoupons = 0;
 
     /* 
     * balance of S coupons for each address 
@@ -59,20 +51,6 @@ contract FedCoup is MintableToken {
     * In future, this function will be delegated to new contract which would determine the FCC price from the exchange data.
     */
     FCCPrice _fCCPriceFunction;
-
-    /*
-    * Cost of B coupon (in percentage) when transfer to other user.  
-    * This cost necessary, otherwise B coupon will go on circulation loop and it might go on in own curreny mode. 
-    * Using this cost, B coupon crunched back to the system if transfer happens continuously without accepting coupons.
-    */
-    uint TransferCostBcoupon = 1;
-
-    /*
-    * Cost of S coupon (in percentage) when transfer to other user.  
-    * This cost necessary to motivate users to sell products (with coupons) instead of transfering S coupons.
-    * Using this cost, S coupon crunched back to the system if transfer happens continuously without accepting coupons.
-    */
-    uint TransferCostScoupon = 1;
 
     /* 
     * event to log coupon creation.
@@ -186,7 +164,12 @@ contract FedCoup is MintableToken {
         *                           FCC price  
         *            
         */
-        balances[msg.sender] = balances[msg.sender].add( _numberOfBcoupons );
+        uint _numberOfFCC = _numberOfBcoupons.mul( constant_coupon_price ).div( _fCCPriceFunction.getFCCPrice() );
+
+        /*
+        * add calcualated FCC to acceptor's account.
+        */
+        balances[msg.sender] = balances[msg.sender].add( _numberOfFCC );
         
         /* 
         * log event. 
@@ -211,7 +194,7 @@ contract FedCoup is MintableToken {
         * Formula:
         *            transferCost = (1/100) * _numberOfBcoupons 
         */
-        uint transferCost =  _numberOfBcoupons.div( 100 ).mul(TransferCostBcoupon);
+        uint transferCost =  _numberOfBcoupons.div( 100 ).mul(transferCostBcoupon);
 
         /*
         * add transfer cost to residual B coupons.
@@ -244,7 +227,7 @@ contract FedCoup is MintableToken {
         * Formula:
         *            transferCost = (1/100) * _numberOfScoupons 
         */
-        uint transferCost =  _numberOfScoupons.div( 100 ).mul(TransferCostScoupon);
+        uint transferCost =  _numberOfScoupons.div( 100 ).mul(transferCostScoupon);
 
         /*
         * add transfer cost to residual S coupons.
@@ -263,28 +246,6 @@ contract FedCoup is MintableToken {
     }
 
     /*
-    * Transfer residual B coupons to entities which integrates FedCoup. 
-    * It's investment on entities to integrate FedCoup on their sales lifecycle. 
-    */
-    function transferResidualBcoupons(address _to, uint _numberOfBcoupons) onlyPayloadSize(2 * 32) onlyOwner {
-        residualBcoupons = residualBcoupons.sub(_numberOfBcoupons);
-        balance_B_coupons[_to] = balance_B_coupons[_to].add(_numberOfBcoupons);
-        /* log event */
-        TransferResidual_B_coupons(msg.sender, _to, _numberOfBcoupons);
-    } 
- 
-    /*
-    * Transfer residual B coupons to entities which integrates FedCoup. 
-    * It's investment on entities to integrate FedCoup on their sales lifecycle. 
-    */
-    function transferResidualScoupons(address _to, uint _numberOfScoupons) onlyPayloadSize(2 * 32) onlyOwner {
-        residualScoupons = residualScoupons.sub(_numberOfScoupons);
-        balance_S_coupons[_to] = balance_S_coupons[_to].add(_numberOfScoupons);
-        /* log event */
-        TransferResidual_B_coupons(msg.sender, _to, _numberOfScoupons);
-    } 
-
-    /*
     * Get balance of S coupons.
     */
     function balanceOf_S_coupons(address _owner) constant returns (uint Sbalance) {
@@ -299,13 +260,6 @@ contract FedCoup is MintableToken {
     }    
 
     /*
-    * Get balance of residual B coupons.
-    */
-    function getBalanceOfResidualBcoupons() constant returns(uint residualBcoupons) {
-        return residualBcoupons;
-    }
-
-    /*
     * Set FCC price function to get FCC price.
     */
     function setFCCPriceFunction(address addrFCCPriceFunc) onlyPayloadSize(2 * 32) onlyOwner {
@@ -315,5 +269,6 @@ contract FedCoup is MintableToken {
     /*
     * 
     */
+    function set
     
 }

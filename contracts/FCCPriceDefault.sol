@@ -3,7 +3,7 @@ pragma solidity ^0.4.4;
 import "./FCCPrice.sol";
 
 /*
-* FCC (FedCoup currency) price in USD.
+* FCC (FedCoup token) price in USD.
 */
 contract FCCPriceDefault is FCCPrice {
 
