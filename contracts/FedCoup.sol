@@ -1,14 +1,14 @@
 pragma solidity ^0.4.4;
 import "./FCCPrice.sol";
 import "./FCCPriceDefault.sol";
-import "./CouponCostFunctionDefault.sol";
-import "./ResidualCouponDistDefault.sol";
+import "./CouponCostFunction.sol";
+import "./ResidualCouponDist.sol";
 import "zeppelin/token/MintableToken.sol";
 
 /*
 * Contract for Federation Coupon System.
 */
-contract FedCoup is MintableToken {
+contract FedCoup is MintableToken, ResidualCouponDist, CouponCostFunction {
 
     using SafeMath for uint;
 
@@ -269,6 +269,9 @@ contract FedCoup is MintableToken {
     /*
     * 
     */
-    function set
+    
+    function setCouponCostFunction() onlyPayloadSize(2 * 32) onlyOwner {
+        
+    }
     
 }

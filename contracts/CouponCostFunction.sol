@@ -19,4 +19,13 @@ contract CouponCostFunction {
     */
     uint transferCostScoupon = 90;
  
+    /*
+    * 
+    */
+    function setBcouponTransferCost(uint cost);
+
+    /*
+    *
+    */
+    function setScouponTransferCost(uint cost);
 }

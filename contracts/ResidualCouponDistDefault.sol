@@ -1,5 +1,8 @@
 pragma solidity ^0.4.4;
 
+import "./ResidualCouponDist.sol";
+import "zeppelin/ownership/Ownable.sol";
+
 /*
 * 
 */
@@ -9,7 +12,7 @@ contract ResidualCouponDistDefault is ResidualCouponDist {
     * Transfer residual B coupons to entities which integrates FedCoup. 
     * It's investment on entities to integrate FedCoup on their sales lifecycle. 
     */
-    function transferResidualBcoupons(address _to, uint _numberOfBcoupons) onlyPayloadSize(2 * 32) onlyOwner {
+    function transferResidualBcoupons(address _to, uint _numberOfBcoupons) onlyOwner {
         /*
         * substract transfered _numberOfBcoupons from sender's account.
         */      
@@ -30,7 +33,7 @@ contract ResidualCouponDistDefault is ResidualCouponDist {
     * Transfer residual B coupons to entities which integrates FedCoup. 
     * It's investment on entities to integrate FedCoup on their sales lifecycle. 
     */
-    function transferResidualScoupons(address _to, uint _numberOfScoupons) onlyPayloadSize(2 * 32) onlyOwner {
+    function transferResidualScoupons(address _to, uint _numberOfScoupons) onlyOwner {
 
         /*
         * substract transfered _numberOfScoupons from sender's account.
@@ -46,6 +49,20 @@ contract ResidualCouponDistDefault is ResidualCouponDist {
         * log event. 
         */
         TransferResidual_B_coupons(msg.sender, _to, _numberOfScoupons);
+    }
+
+   /*
+    * Get balance of residual B coupons.
+    */
+    function getBalanceOfResidualBcoupons() constant returns(uint residualBcoupons) {
+        return residualBcoupons;
+    }
+
+    /*
+    * Get balance of residual S coupons.
+    */
+    function getBalanceOfResidualScoupons() constant returns(uint residualScoupons) {
+        return residualScoupons;
     }
 
 }

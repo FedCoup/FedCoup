@@ -1,6 +1,6 @@
 pragma solidity ^0.4.4;
 
-import "./CouponCostFunctionDefault.sol";
+import "./CouponCostFunction.sol";
 import "zeppelin/ownership/Ownable.sol";
 
 /*

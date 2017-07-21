@@ -19,16 +19,12 @@ contract ResidualCouponDist {
      /*
     * Get balance of residual B coupons.
     */
-    function getBalanceOfResidualBcoupons() constant returns(uint residualBcoupons) {
-        return residualBcoupons;
-    }
+    function getBalanceOfResidualBcoupons() constant returns(uint residualBcoupons);
 
     /*
     * Get balance of residual S coupons.
     */
-    function getBalanceOfResidualScoupons() constant returns(uint residualScoupons) {
-        return residualScoupons;
-    }
+    function getBalanceOfResidualScoupons() constant returns(uint residualScoupons);
 
 
 }
