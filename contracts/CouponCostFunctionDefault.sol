@@ -8,6 +8,11 @@ import "zeppelin/ownership/Ownable.sol";
 */
 contract CouponCostFunctionDefault is CouponCostFunction, Ownable {
 
+	function CouponCostFunctionDefault(uint _transferCostBcoupon, uint _transferCostScoupon) onlyOwner {
+		transferCostBcoupon = _transferCostBcoupon;
+		transferCostScoupon = _transferCostScoupon;
+	}
+
 	/*
 	* 
 	*/
@@ -21,4 +26,19 @@ contract CouponCostFunctionDefault is CouponCostFunction, Ownable {
 	function setScouponTransferCost(uint cost) onlyOwner {
 		transferCostScoupon = cost;
 	}
+
+	/*
+    * 
+    */
+    function getBcouponTransferCost() constant returns (uint) {
+    	return transferCostBcoupon;
+    }
+
+    /*
+    *
+    */
+    function getScouponTransferCost() constant returns (uint) {
+    	return transferCostScoupon;
+    }
+
 }

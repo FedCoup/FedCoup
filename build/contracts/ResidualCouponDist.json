@@ -1,0 +1,69 @@
+{
+  "contract_name": "ResidualCouponDist",
+  "abi": [
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "_to",
+          "type": "address"
+        },
+        {
+          "name": "_numberOfScoupons",
+          "type": "uint256"
+        }
+      ],
+      "name": "transferResidualScoupons",
+      "outputs": [],
+      "payable": false,
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "_to",
+          "type": "address"
+        },
+        {
+          "name": "_numberOfBcoupons",
+          "type": "uint256"
+        }
+      ],
+      "name": "transferResidualBcoupons",
+      "outputs": [],
+      "payable": false,
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "getBalanceOfResidualScoupons",
+      "outputs": [
+        {
+          "name": "residualScoupons",
+          "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "getBalanceOfResidualBcoupons",
+      "outputs": [
+        {
+          "name": "residualBcoupons",
+          "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "type": "function"
+    }
+  ],
+  "unlinked_binary": "0x",
+  "networks": {},
+  "schema_version": "0.0.5",
+  "updated_at": 1500604372622
+}

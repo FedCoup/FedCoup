@@ -1,5 +1,5 @@
 {
-  "contract_name": "FedCoup",
+  "contract_name": "ResidualCouponDistDefault",
   "abi": [
     {
       "constant": true,
@@ -121,19 +121,6 @@
       "constant": false,
       "inputs": [
         {
-          "name": "addrCouponCostFunction",
-          "type": "address"
-        }
-      ],
-      "name": "setCouponCostFunction",
-      "outputs": [],
-      "payable": false,
-      "type": "function"
-    },
-    {
-      "constant": false,
-      "inputs": [
-        {
           "name": "_from",
           "type": "address"
         },
@@ -178,24 +165,6 @@
       "type": "function"
     },
     {
-      "constant": true,
-      "inputs": [
-        {
-          "name": "_owner",
-          "type": "address"
-        }
-      ],
-      "name": "balanceOf_B_coupons",
-      "outputs": [
-        {
-          "name": "Bbalance",
-          "type": "uint256"
-        }
-      ],
-      "payable": false,
-      "type": "function"
-    },
-    {
       "constant": false,
       "inputs": [
         {
@@ -212,24 +181,6 @@
         {
           "name": "",
           "type": "bool"
-        }
-      ],
-      "payable": false,
-      "type": "function"
-    },
-    {
-      "constant": true,
-      "inputs": [
-        {
-          "name": "_owner",
-          "type": "address"
-        }
-      ],
-      "name": "balanceOf_S_coupons",
-      "outputs": [
-        {
-          "name": "Sbalance",
-          "type": "uint256"
         }
       ],
       "payable": false,
@@ -267,23 +218,6 @@
       "type": "function"
     },
     {
-      "constant": false,
-      "inputs": [
-        {
-          "name": "_to",
-          "type": "address"
-        },
-        {
-          "name": "_numberOfBcoupons",
-          "type": "uint256"
-        }
-      ],
-      "name": "transferBcoupons",
-      "outputs": [],
-      "payable": false,
-      "type": "function"
-    },
-    {
       "constant": true,
       "inputs": [],
       "name": "owner",
@@ -297,19 +231,6 @@
       "type": "function"
     },
     {
-      "constant": false,
-      "inputs": [
-        {
-          "name": "_FCC",
-          "type": "uint256"
-        }
-      ],
-      "name": "createCoupons",
-      "outputs": [],
-      "payable": false,
-      "type": "function"
-    },
-    {
       "constant": true,
       "inputs": [],
       "name": "symbol",
@@ -319,23 +240,6 @@
           "type": "string"
         }
       ],
-      "payable": false,
-      "type": "function"
-    },
-    {
-      "constant": false,
-      "inputs": [
-        {
-          "name": "_from",
-          "type": "address"
-        },
-        {
-          "name": "_numberOfBcoupons",
-          "type": "uint256"
-        }
-      ],
-      "name": "accept_B_coupons",
-      "outputs": [],
       "payable": false,
       "type": "function"
     },
@@ -370,23 +274,6 @@
       "type": "function"
     },
     {
-      "constant": false,
-      "inputs": [
-        {
-          "name": "_to",
-          "type": "address"
-        },
-        {
-          "name": "_numberOfScoupons",
-          "type": "uint256"
-        }
-      ],
-      "name": "transferScoupons",
-      "outputs": [],
-      "payable": false,
-      "type": "function"
-    },
-    {
       "constant": true,
       "inputs": [],
       "name": "getBalanceOfResidualBcoupons",
@@ -396,19 +283,6 @@
           "type": "uint256"
         }
       ],
-      "payable": false,
-      "type": "function"
-    },
-    {
-      "constant": false,
-      "inputs": [
-        {
-          "name": "addrFCCPriceFunc",
-          "type": "address"
-        }
-      ],
-      "name": "setFCCPriceFunction",
-      "outputs": [],
       "payable": false,
       "type": "function"
     },
@@ -459,11 +333,6 @@
       "outputs": [],
       "payable": false,
       "type": "function"
-    },
-    {
-      "inputs": [],
-      "payable": false,
-      "type": "constructor"
     },
     {
       "anonymous": false,
@@ -688,179 +557,7 @@
     }
   ],
   "unlinked_binary": "0x",
-  "networks": {
-    "1499549452730": {
-      "events": {
-        "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef": {
-          "anonymous": false,
-          "inputs": [
-            {
-              "indexed": true,
-              "name": "from",
-              "type": "address"
-            },
-            {
-              "indexed": true,
-              "name": "to",
-              "type": "address"
-            },
-            {
-              "indexed": false,
-              "name": "value",
-              "type": "uint256"
-            }
-          ],
-          "name": "Transfer",
-          "type": "event"
-        },
-        "0xcc16f5dbb4873280815c1ee09dbd06736cffcc184412cf7a71a0fdb75d397ca5": {
-          "anonymous": false,
-          "inputs": [
-            {
-              "indexed": true,
-              "name": "from",
-              "type": "address"
-            },
-            {
-              "indexed": false,
-              "name": "value",
-              "type": "uint256"
-            }
-          ],
-          "name": "Burn",
-          "type": "event"
-        },
-        "0x9d82aac5c0bed9ed24ff524571bca81e37d0323c14640325492c5f817443a728": {
-          "anonymous": false,
-          "inputs": [
-            {
-              "indexed": true,
-              "name": "from",
-              "type": "address"
-            },
-            {
-              "indexed": false,
-              "name": "value",
-              "type": "uint256"
-            }
-          ],
-          "name": "TransferBtoken",
-          "type": "event"
-        }
-      },
-      "links": {},
-      "address": "0xf90b643b885d6d089774156b18cbd6d2fb194d22",
-      "updated_at": 1499564857073
-    },
-    "1499738633037": {
-      "events": {
-        "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef": {
-          "anonymous": false,
-          "inputs": [
-            {
-              "indexed": true,
-              "name": "from",
-              "type": "address"
-            },
-            {
-              "indexed": true,
-              "name": "to",
-              "type": "address"
-            },
-            {
-              "indexed": false,
-              "name": "value",
-              "type": "uint256"
-            }
-          ],
-          "name": "Transfer",
-          "type": "event"
-        },
-        "0xcc16f5dbb4873280815c1ee09dbd06736cffcc184412cf7a71a0fdb75d397ca5": {
-          "anonymous": false,
-          "inputs": [
-            {
-              "indexed": true,
-              "name": "from",
-              "type": "address"
-            },
-            {
-              "indexed": false,
-              "name": "value",
-              "type": "uint256"
-            }
-          ],
-          "name": "Burn",
-          "type": "event"
-        },
-        "0x9d82aac5c0bed9ed24ff524571bca81e37d0323c14640325492c5f817443a728": {
-          "anonymous": false,
-          "inputs": [
-            {
-              "indexed": true,
-              "name": "from",
-              "type": "address"
-            },
-            {
-              "indexed": false,
-              "name": "value",
-              "type": "uint256"
-            }
-          ],
-          "name": "TransferBtoken",
-          "type": "event"
-        },
-        "0x0f6798a560793a54c3bcfe86a93cde1e73087d944c0ea20544137d4121396885": {
-          "anonymous": false,
-          "inputs": [
-            {
-              "indexed": true,
-              "name": "to",
-              "type": "address"
-            },
-            {
-              "indexed": false,
-              "name": "value",
-              "type": "uint256"
-            }
-          ],
-          "name": "Mint",
-          "type": "event"
-        },
-        "0xae5184fba832cb2b1f702aca6117b8d265eaf03ad33eb133f19dde0f5920fa08": {
-          "anonymous": false,
-          "inputs": [],
-          "name": "MintFinished",
-          "type": "event"
-        },
-        "0x8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b925": {
-          "anonymous": false,
-          "inputs": [
-            {
-              "indexed": true,
-              "name": "owner",
-              "type": "address"
-            },
-            {
-              "indexed": true,
-              "name": "spender",
-              "type": "address"
-            },
-            {
-              "indexed": false,
-              "name": "value",
-              "type": "uint256"
-            }
-          ],
-          "name": "Approval",
-          "type": "event"
-        }
-      },
-      "links": {},
-      "address": "0xcbbe75a841488c8c2895238e434f87e3bb1e3e10",
-      "updated_at": 1499739172597
-    }
-  },
+  "networks": {},
   "schema_version": "0.0.5",
-  "updated_at": 1500604372653
+  "updated_at": 1500604372622
 }

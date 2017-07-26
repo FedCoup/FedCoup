@@ -1,0 +1,61 @@
+{
+  "contract_name": "CouponCostFunction",
+  "abi": [
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "getScouponTransferCost",
+      "outputs": [
+        {
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "cost",
+          "type": "uint256"
+        }
+      ],
+      "name": "setScouponTransferCost",
+      "outputs": [],
+      "payable": false,
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "getBcouponTransferCost",
+      "outputs": [
+        {
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "cost",
+          "type": "uint256"
+        }
+      ],
+      "name": "setBcouponTransferCost",
+      "outputs": [],
+      "payable": false,
+      "type": "function"
+    }
+  ],
+  "unlinked_binary": "0x",
+  "networks": {},
+  "schema_version": "0.0.5",
+  "updated_at": 1500604372622
+}

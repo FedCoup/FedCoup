@@ -1,5 +1,7 @@
 pragma solidity ^0.4.4;
 
+
+
 /*
 * 
 */
@@ -17,6 +19,18 @@ contract ResidualCouponDist {
 
  
      /*
+    * Transfer residual B coupons to entities which integrates FedCoup. 
+    * It's investment on entities to integrate FedCoup on their sales lifecycle. 
+    */
+    function transferResidualBcoupons(address _to, uint _numberOfBcoupons);
+
+    /*
+    * Transfer residual B coupons to entities which integrates FedCoup. 
+    * It's investment on entities to integrate FedCoup on their sales lifecycle. 
+    */
+    function transferResidualScoupons(address _to, uint _numberOfScoupons);
+
+    /*
     * Get balance of residual B coupons.
     */
     function getBalanceOfResidualBcoupons() constant returns(uint residualBcoupons);

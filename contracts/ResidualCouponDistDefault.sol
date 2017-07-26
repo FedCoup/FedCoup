@@ -1,12 +1,13 @@
 pragma solidity ^0.4.4;
 
+import "./FedCoupLedger.sol";
 import "./ResidualCouponDist.sol";
-import "zeppelin/ownership/Ownable.sol";
+
 
 /*
 * 
 */
-contract ResidualCouponDistDefault is ResidualCouponDist {
+contract ResidualCouponDistDefault is FedCoupLedger {
 
     /*
     * Transfer residual B coupons to entities which integrates FedCoup. 
