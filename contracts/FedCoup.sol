@@ -11,9 +11,9 @@ contract FedCoup is FedCoupLedger {
     /*
     * FedCoup Constructor.
     */
-    // function FedCoup(uint t) payable {
-    //     t1 = t;
-    // }
+    function FedCoup() {
+        
+    }
 
 
     /* 
@@ -116,7 +116,7 @@ contract FedCoup is FedCoupLedger {
         * Formula:
         *            transferCost = (1/100) * _numberOfBcoupons 
         */
-        uint transferCost =  _numberOfBcoupons.div( 100 ).mul(_couponCostFunction.getBcouponTransferCost());
+        uint transferCost =  _numberOfBcoupons.div( 100 ).mul(_couponTransferCost.getBcouponTransferCost());
 
         /*
         * add transfer cost to residual B coupons.
@@ -149,7 +149,7 @@ contract FedCoup is FedCoupLedger {
         * Formula:
         *            transferCost = (1/100) * _numberOfScoupons 
         */
-        uint transferCost =  _numberOfScoupons.div( 100 ).mul(_couponCostFunction.getScouponTransferCost());
+        uint transferCost =  _numberOfScoupons.div( 100 ).mul(_couponTransferCost.getScouponTransferCost());
 
         /*
         * add transfer cost to residual S coupons.
@@ -182,17 +182,10 @@ contract FedCoup is FedCoupLedger {
     }    
 
     /*
-    * Set FCC price function to get FCC price.
-    */
-    function setFCCPriceFunction(address addrFCCPriceFunc) onlyPayloadSize(2 * 32) onlyOwner {
-        _fCCPriceFunction = FCCPrice(addrFCCPriceFunc);
-    }
-
-    /*
     * 
     */
-    function setCouponCostFunction(address addrCouponCostFunction) onlyPayloadSize(2 * 32) onlyOwner {
-        _couponCostFunction = CouponCostFunction(addrCouponCostFunction);
+    function setCouponTransferCost(address addrCouponTransferCost) onlyPayloadSize(2 * 32) onlyOwner {
+        _couponTransferCost = CouponTransferCost(addrCouponTransferCost);
     }
     
 

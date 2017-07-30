@@ -1,14 +1,13 @@
 pragma solidity ^0.4.4;
 
 import "zeppelin/token/MintableToken.sol";
-import "./FCCPrice.sol";
-import "./CouponCostFunction.sol";
+import "./CouponTransferCost.sol";
 import "./ResidualCouponDist.sol";
 
 /*
 * Contract for Federation Coupon System.
 */
-contract FedCoupLedger is MintableToken, ResidualCouponDist, CouponCostFunction {
+contract FedCoupLedger is MintableToken, ResidualCouponDist, CouponTransferCost {
 
     using SafeMath for uint;
 
@@ -45,21 +44,10 @@ contract FedCoupLedger is MintableToken, ResidualCouponDist, CouponCostFunction 
     */
     mapping (address => uint) balance_B_coupons;
     
-    mapping (address => uint) B_coupons_expiration;
-
-    mapping (address => uint) S_coupons_expiration;
-
-    /* 
-    * Function to get FCC price. 
-    * While FedCoup contract deployment, this function delegated to FCCPriceDefault contract.
-    * In future, this function will be delegated to new contract which would determine the FCC price from the exchange data.
-    */
-    FCCPrice _fCCPriceFunction;
-
     /*
     *
     */ 
-    CouponCostFunction _couponCostFunction;
+    CouponTransferCost _couponTransferCost;
 
     /* 
     * event to log coupon creation.

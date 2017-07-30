@@ -121,19 +121,6 @@
       "constant": false,
       "inputs": [
         {
-          "name": "addrCouponCostFunction",
-          "type": "address"
-        }
-      ],
-      "name": "setCouponCostFunction",
-      "outputs": [],
-      "payable": false,
-      "type": "function"
-    },
-    {
-      "constant": false,
-      "inputs": [
-        {
           "name": "_from",
           "type": "address"
         },
@@ -232,6 +219,19 @@
           "type": "uint256"
         }
       ],
+      "payable": false,
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "addrCouponTransferCost",
+          "type": "address"
+        }
+      ],
+      "name": "setCouponTransferCost",
+      "outputs": [],
       "payable": false,
       "type": "function"
     },
@@ -400,19 +400,6 @@
       "type": "function"
     },
     {
-      "constant": false,
-      "inputs": [
-        {
-          "name": "addrFCCPriceFunc",
-          "type": "address"
-        }
-      ],
-      "name": "setFCCPriceFunction",
-      "outputs": [],
-      "payable": false,
-      "type": "function"
-    },
-    {
       "constant": true,
       "inputs": [
         {
@@ -459,6 +446,11 @@
       "outputs": [],
       "payable": false,
       "type": "function"
+    },
+    {
+      "inputs": [],
+      "payable": false,
+      "type": "constructor"
     },
     {
       "anonymous": false,
@@ -685,5 +677,5 @@
   "unlinked_binary": "0x",
   "networks": {},
   "schema_version": "0.0.5",
-  "updated_at": 1501383689380
+  "updated_at": 1501384467762
 }

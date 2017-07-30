@@ -1,5 +1,5 @@
 {
-  "contract_name": "CouponCostFunction",
+  "contract_name": "CouponTransferCost",
   "abi": [
     {
       "constant": true,
@@ -57,5 +57,5 @@
   "unlinked_binary": "0x",
   "networks": {},
   "schema_version": "0.0.5",
-  "updated_at": 1501383689380
+  "updated_at": 1501384467762
 }

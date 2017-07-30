@@ -1,14 +1,14 @@
 pragma solidity ^0.4.4;
 
-import "./CouponCostFunction.sol";
+import "./CouponTransferCost.sol";
 import "zeppelin/ownership/Ownable.sol";
 
 /*
 * Default transfer cost functions to set cost values. 
 */
-contract CouponCostFunctionDefault is CouponCostFunction, Ownable {
+contract CouponTransferCostDefault is CouponTransferCost, Ownable {
 
-	function CouponCostFunctionDefault(uint _transferCostBcoupon, uint _transferCostScoupon) onlyOwner {
+	function CouponTransferCostDefault(uint _transferCostBcoupon, uint _transferCostScoupon) onlyOwner {
 		transferCostBcoupon = _transferCostBcoupon;
 		transferCostScoupon = _transferCostScoupon;
 	}

@@ -3,7 +3,7 @@ pragma solidity ^0.4.4;
 /*
 * Coupon transfer costs.
 */
-contract CouponCostFunction {
+contract CouponTransferCost {
 
     /*
     * Cost of B coupon (in percentage) when transfer to other user.  
