@@ -31,9 +31,9 @@ contract FedCoupLedger is MintableToken, ResidualCouponDist, CouponCostFunction 
     uint256 FCC_value = 10 finney;  
 
     /* 
-    * constant S,B coupon (federation coupon) price as 0.01 USD. 
+    * constant S,B coupon (federation coupon) division factor as 0.01 
     */
-    uint256 constant constant_coupon_price = 10 finney;  
+    uint256 constant constant_coupon_div_factor = 10 finney;  
 
     /* 
     * balance of S coupons for each address 
@@ -45,6 +45,10 @@ contract FedCoupLedger is MintableToken, ResidualCouponDist, CouponCostFunction 
     */
     mapping (address => uint) balance_B_coupons;
     
+    mapping (address => uint) B_coupons_expiration;
+
+    mapping (address => uint) S_coupons_expiration;
+
     /* 
     * Function to get FCC price. 
     * While FedCoup contract deployment, this function delegated to FCCPriceDefault contract.

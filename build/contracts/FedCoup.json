@@ -461,11 +461,6 @@
       "type": "function"
     },
     {
-      "inputs": [],
-      "payable": false,
-      "type": "constructor"
-    },
-    {
       "anonymous": false,
       "inputs": [
         {
@@ -862,5 +857,5 @@
     }
   },
   "schema_version": "0.0.5",
-  "updated_at": 1500604372653
+  "updated_at": 1501375551402
 }

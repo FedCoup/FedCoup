@@ -11,9 +11,10 @@ contract FedCoup is FedCoupLedger {
     /*
     * FedCoup Constructor.
     */
-    function FedCoup() {
+    // function FedCoup(uint t) payable {
+    //     t1 = t;
+    // }
 
-    }
 
     /* 
     * Create tokens for given FCC. 
@@ -29,22 +30,22 @@ contract FedCoup is FedCoupLedger {
         *  
         *  Formula: number of B coupons =
         *  
-        *           (given FCC * FCC price)
-        *          --------------------------      
-        *            constant_coupon_price  
+        *                   given FCC
+        *          -----------------------------      
+        *            constant_coupon_div_factor  
         */
-        uint  newBcoupons = _FCC.mul( _fCCPriceFunction.getFCCPrice() ).div( constant_coupon_price );
+        uint  newBcoupons = _FCC.div( constant_coupon_div_factor );
 
         /* 
         *  S coupon creation for given _FCC 
         * 
         *  Formula: number of S coupons =
         * 
-        *          (given FCC * FCC price)
-        *        ---------------------------   
-        *          constant_coupon_price
+        *                given FCC
+        *        ------------------------------   
+        *          constant_coupon_div_factor
         */
-        uint  newScoupons = _FCC.mul( _fCCPriceFunction.getFCCPrice() ).div( constant_coupon_price );
+        uint  newScoupons = _FCC.div( constant_coupon_div_factor );
 
 
         /* 
@@ -78,14 +79,14 @@ contract FedCoup is FedCoupLedger {
         /* 
         * convert accepted B coupons into FCC equivalent and add it to sender balance.
         * 
-        *  Formula: FCC =
+        *  Formula: number of FCC =
         *  
-        *           (_numberOfBcoupons * constant_coupon_price)
-        *          ---------------------------------------------      
-        *                           FCC price  
+        *                _numberOfBcoupons
+        *          ------------------------------      
+        *            constant_coupon_div_factor
         *            
         */
-        uint _numberOfFCC = _numberOfBcoupons.mul( constant_coupon_price ).div( _fCCPriceFunction.getFCCPrice() );
+        uint _numberOfFCC = _numberOfBcoupons.div( constant_coupon_div_factor );
 
         /*
         * add calcualated FCC to acceptor's account.
@@ -190,7 +191,6 @@ contract FedCoup is FedCoupLedger {
     /*
     * 
     */
-    
     function setCouponCostFunction(address addrCouponCostFunction) onlyPayloadSize(2 * 32) onlyOwner {
         _couponCostFunction = CouponCostFunction(addrCouponCostFunction);
     }
