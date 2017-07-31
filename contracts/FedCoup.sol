@@ -1,18 +1,33 @@
 pragma solidity ^0.4.4;
 
+import "zeppelin/ownership/Ownable.sol";
+import "zeppelin/SafeMath.sol";
 import "./FedCoupLedger.sol";
-
 
 /*
 * Contract for Federation Coupon System.
 */
-contract FedCoup is FedCoupLedger {
+contract FedCoup is Ownable {
+
+    using SafeMath for uint;
+
+    FedCoupLedger fedCoupLedger;
+
+    /*
+    * Fix for the ERC20 short address attack  
+    */
+    modifier onlyPayloadSize(uint size) {
+     if(msg.data.length < size + 4) {
+       throw;
+     }
+     _;
+    }
 
     /*
     * FedCoup Constructor.
     */
-    function FedCoup() {
-        
+    function FedCoup(address _fedCoupLedgerAddr) {
+        fedCoupLedger = FedCoupLedger(_fedCoupLedgerAddr);
     }
 
 
@@ -20,42 +35,42 @@ contract FedCoup is FedCoupLedger {
     * Create tokens for given FCC. 
     *         _FCC : given FedCoup curreny (1FCC equal to 1 ether with respect to number format)
     */
-    function createCoupons(uint _FCC) onlyPayloadSize(2 * 32) {
+    function createCoupons(uint _numberOfTokens) onlyPayloadSize(2 * 32) {
 
-        /* subtract given FCC from sender FCC balance */
-        balances[msg.sender] = balances[msg.sender].sub( _FCC );
-        
+        /* subtract given token from sender token balance */
+        fedCoupLedger.subTokenBalances(msg.sender, _numberOfTokens );
+
         /* 
-        *  B coupon creation for given _FCC 
+        *  B coupon creation for given _numberOfTokens 
         *  
         *  Formula: number of B coupons =
         *  
-        *                   given FCC
-        *          -----------------------------      
-        *            constant_coupon_div_factor  
+        *                 given _numberOfTokens
+        *          ----------------------------------      
+        *               constant_coupon_div_factor  
         */
-        uint  newBcoupons = _FCC.div( constant_coupon_div_factor );
+        uint  newBcoupons = _numberOfTokens.div( fedCoupLedger.getConstantCouponDivFactor() );
 
         /* 
-        *  S coupon creation for given _FCC 
+        *  S coupon creation for given _numberOfTokens 
         * 
         *  Formula: number of S coupons =
         * 
-        *                given FCC
-        *        ------------------------------   
-        *          constant_coupon_div_factor
+        *                given _numberOfTokens
+        *            ----------------------------   
+        *             constant_coupon_div_factor
         */
-        uint  newScoupons = _FCC.div( constant_coupon_div_factor );
+        uint  newScoupons = _numberOfTokens.div( fedCoupLedger.getConstantCouponDivFactor() );
 
 
         /* 
         * add new coupons with existing coupon balance 
         */
-        balance_B_coupons[msg.sender] = balance_B_coupons[msg.sender].add( newBcoupons );
-        balance_S_coupons[msg.sender] = balance_S_coupons[msg.sender].add( newScoupons );
+        fedCoupLedger.addBcouponBalances( msg.sender, newBcoupons );
+        fedCoupLedger.addScouponBalances( msg.sender, newScoupons );
 
         /* log event */
-        CouponsCreated(msg.sender, newBcoupons, newScoupons);
+        fedCoupLedger.logCouponCreationEvent(msg.sender, newBcoupons, newScoupons);
     }
 
 
@@ -69,34 +84,34 @@ contract FedCoup is FedCoupLedger {
         /* 
         * substract B coupons from the giver account.
         */
-        balance_B_coupons[_from] = balance_B_coupons[_from].sub( _numberOfBcoupons );
+        fedCoupLedger.subBcouponBalances(_from, _numberOfBcoupons);
 
         /* 
         * substract equivalent S coupons from message sender(coupon acceptor) account.
         */
-        balance_S_coupons[msg.sender] = balance_S_coupons[msg.sender].sub( _numberOfBcoupons );
-    
+        fedCoupLedger.subScouponBalances(msg.sender, _numberOfBcoupons);
+
         /* 
         * convert accepted B coupons into FCC equivalent and add it to sender balance.
         * 
-        *  Formula: number of FCC =
+        *  Formula: number of tokens =
         *  
         *                _numberOfBcoupons
         *          ------------------------------      
         *            constant_coupon_div_factor
         *            
         */
-        uint _numberOfFCC = _numberOfBcoupons.div( constant_coupon_div_factor );
+        uint _numberOfTokens = _numberOfBcoupons.div( fedCoupLedger.getConstantCouponDivFactor() );
 
         /*
-        * add calcualated FCC to acceptor's account.
+        * add calcualated tokens to acceptor's account.
         */
-        balances[msg.sender] = balances[msg.sender].add( _numberOfFCC );
-        
+        fedCoupLedger.addTokenBalances(msg.sender, _numberOfTokens);
+
         /* 
         * log event. 
         */
-        Accept_B_coupons(_from, msg.sender, _numberOfBcoupons);        
+        fedCoupLedger.logAcceptBcouponsEvent(_from, msg.sender, _numberOfBcoupons);        
     }
 
     /* 
@@ -109,29 +124,29 @@ contract FedCoup is FedCoupLedger {
         /*
         * substract _numberOfBcoupons from sender account.
         */
-        balance_B_coupons[msg.sender] = balance_B_coupons[msg.sender].sub(_numberOfBcoupons);
+        fedCoupLedger.balance_B_coupons[msg.sender] = fedCoupLedger.balance_B_coupons[msg.sender].sub(_numberOfBcoupons);
 
         /*
         * calculate transfer cost.
         * Formula:
         *            transferCost = (1/100) * _numberOfBcoupons 
         */
-        uint transferCost =  _numberOfBcoupons.div( 100 ).mul(_couponTransferCost.getBcouponTransferCost());
+        uint transferCost =  _numberOfBcoupons.div( 100 ).mul(fedCoupLedger.getBcouponTransferCost());
 
         /*
         * add transfer cost to residual B coupons.
         */
-        residualBcoupons = residualBcoupons.add(transferCost);
+        fedCoupLedger.residualBcoupons = fedCoupLedger.residualBcoupons.add(transferCost);
 
         /*
         * subtract transfer cost from given _numberOfBcoupons and add it to the TO account.
         */
-        balance_B_coupons[_to] = balance_B_coupons[_to].add( _numberOfBcoupons.sub(transferCost) );
+        fedCoupLedger.balance_B_coupons[_to] = fedCoupLedger.balance_B_coupons[_to].add( _numberOfBcoupons.sub(transferCost) );
 
         /* 
         * log event 
         */
-        Transfer_B_coupons(msg.sender, _to, _numberOfBcoupons);
+        fedCoupLedger.Transfer_B_coupons(msg.sender, _to, _numberOfBcoupons);
     }
 
     /* 
@@ -142,51 +157,128 @@ contract FedCoup is FedCoupLedger {
         /*
         * substract _numberOfScoupons from sender account.
         */
-        balance_S_coupons[msg.sender] = balance_S_coupons[msg.sender].sub(_numberOfScoupons);
+        fedCoupLedger.balance_S_coupons[msg.sender] = fedCoupLedger.balance_S_coupons[msg.sender].sub(_numberOfScoupons);
 
         /*
         * calculate transfer cost.
         * Formula:
         *            transferCost = (1/100) * _numberOfScoupons 
         */
-        uint transferCost =  _numberOfScoupons.div( 100 ).mul(_couponTransferCost.getScouponTransferCost());
+        uint transferCost =  _numberOfScoupons.div( 100 ).mul(fedCoupLedger.getScouponTransferCost());
 
         /*
         * add transfer cost to residual S coupons.
         */
-        residualScoupons = residualScoupons.add(transferCost);
+        fedCoupLedger.residualScoupons = fedCoupLedger.residualScoupons.add(transferCost);
 
         /*
         * subtract transfer cost from given _numberOfBcoupons and add it to the TO account.
         */
-        balance_S_coupons[_to] = balance_S_coupons[_to].add(_numberOfScoupons.sub(transferCost));
+        fedCoupLedger.balance_S_coupons[_to] = fedCoupLedger.balance_S_coupons[_to].add(_numberOfScoupons.sub(transferCost));
 
         /* 
         * log event.
         */
-        Transfer_S_coupons(msg.sender, _to, _numberOfScoupons);
+        fedCoupLedger.Transfer_S_coupons(msg.sender, _to, _numberOfScoupons);
+    }
+
+    /*
+    * Transfer residual B coupons to entities which integrates FedCoup. 
+    * It's investment on entities to integrate FedCoup on their sales lifecycle. 
+    */
+    function transferResidualBcoupons(address _to, uint _numberOfBcoupons) onlyOwner {
+        /*
+        * substract transfered _numberOfBcoupons from sender's account.
+        */      
+        fedCoupLedger.residualBcoupons = fedCoupLedger.residualBcoupons.sub( _numberOfBcoupons );
+
+        /*
+        * add _numberOfBcoupons to receiver's account.
+        */
+        fedCoupLedger.balance_B_coupons[_to] = fedCoupLedger.balance_B_coupons[_to].add(_numberOfBcoupons);
+
+        /* 
+        * log event. 
+        */
+        fedCoupLedger.TransferResidual_B_coupons(msg.sender, _to, _numberOfBcoupons);
+    } 
+ 
+    /*
+    * Transfer residual B coupons to entities which integrates FedCoup. 
+    * It's investment on entities to integrate FedCoup on their sales lifecycle. 
+    */
+    function transferResidualScoupons(address _to, uint _numberOfScoupons) onlyOwner {
+
+        /*
+        * substract transfered _numberOfScoupons from sender's account.
+        */ 
+        fedCoupLedger.residualScoupons = fedCoupLedger.residualScoupons.sub( _numberOfScoupons );
+
+        /*
+        * add _numberOfScoupons to receiver's account.
+        */
+        fedCoupLedger.balance_S_coupons[_to] = fedCoupLedger.balance_S_coupons[_to].add( _numberOfScoupons );
+
+        /* 
+        * log event. 
+        */
+        fedCoupLedger.TransferResidual_B_coupons(msg.sender, _to, _numberOfScoupons);
+    }
+
+   /*
+    * Get balance of residual B coupons.
+    */
+    function getBalanceOfResidualBcoupons() constant returns(uint residualBcoupons) {
+        return fedCoupLedger.residualBcoupons;
+    }
+
+    /*
+    * Get balance of residual S coupons.
+    */
+    function getBalanceOfResidualScoupons() constant returns(uint residualScoupons) {
+        return fedCoupLedger.residualScoupons;
     }
 
     /*
     * Get balance of S coupons.
     */
     function balanceOf_S_coupons(address _owner) constant returns (uint Sbalance) {
-        return balance_S_coupons[_owner];
+        return fedCoupLedger.balance_S_coupons[_owner];
     }
 
     /*
     * Get balance of B coupons.
     */
     function balanceOf_B_coupons(address _owner) constant returns (uint Bbalance) {
-        return balance_B_coupons[_owner];
+        return fedCoupLedger.balance_B_coupons[_owner];
     }    
 
     /*
     * 
     */
-    function setCouponTransferCost(address addrCouponTransferCost) onlyPayloadSize(2 * 32) onlyOwner {
-        _couponTransferCost = CouponTransferCost(addrCouponTransferCost);
+    function setBcouponTransferCost(uint cost) onlyOwner {
+        fedCoupLedger.transferCostBcoupon = cost; 
     }
-    
+
+    /*
+    *
+    */
+    function setScouponTransferCost(uint cost) onlyOwner {
+        fedCoupLedger.transferCostScoupon = cost;
+    }
+
+    /*
+    * 
+    */
+    function getBcouponTransferCost() constant returns (uint) {
+        return fedCoupLedger.transferCostBcoupon;
+    }
+
+    /*
+    *
+    */
+    function getScouponTransferCost() constant returns (uint) {
+        return fedCoupLedger.transferCostScoupon;
+    }
 
 }

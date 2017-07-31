@@ -1,13 +1,12 @@
 pragma solidity ^0.4.4;
 
 import "zeppelin/token/MintableToken.sol";
-import "./CouponTransferCost.sol";
-import "./ResidualCouponDist.sol";
+
 
 /*
 * Contract for Federation Coupon System.
 */
-contract FedCoupLedger is MintableToken, ResidualCouponDist, CouponTransferCost {
+contract FedCoupLedger is MintableToken {
 
     using SafeMath for uint;
 
@@ -21,18 +20,12 @@ contract FedCoupLedger is MintableToken, ResidualCouponDist, CouponTransferCost 
     */
     string public symbol = "FCC";
 
-    uint public decimals = 18;
-
-    /* default FCC (fedcoup token) value as 0.01 USD.  
-     * This default value will be used until FCC price ticker available in the exchanges. 
-     * If price ticker available, in the next version, the method will be included to pull price data from available exchanges and average of them will be assigned to this variable.
-     */
-    uint256 FCC_value = 10 finney;  
+    uint public decimals = 18; 
 
     /* 
     * constant S,B coupon (federation coupon) division factor as 0.01 
     */
-    uint256 constant constant_coupon_div_factor = 10 finney;  
+    uint constant constant_coupon_div_factor = 10 finney;  
 
     /* 
     * balance of S coupons for each address 
@@ -43,11 +36,31 @@ contract FedCoupLedger is MintableToken, ResidualCouponDist, CouponTransferCost 
     * balance of B coupons for each address 
     */
     mapping (address => uint) balance_B_coupons;
-    
+
+
+    /* 
+    * residual B coupons which accumulated over the period due to B coupon transfers.
+    */
+    uint residualBcoupons = 0;
+
+    /* 
+    * residual S coupons which accumulated over the period due to B coupon transfers.
+    */
+    uint residualScoupons = 0;
+
     /*
-    *
-    */ 
-    CouponTransferCost _couponTransferCost;
+    * Cost of B coupon (in percentage) when transfer to other user.  
+    * This cost necessary, otherwise B coupon will go on circulation loop and it might go on in own curreny mode. 
+    * Using this cost, B coupon crunched back to the system if transfer happens continuously without accepting coupons.
+    */
+    uint transferCostBcoupon = 90;
+
+    /*
+    * Cost of S coupon (in percentage) when transfer to other user.  
+    * This cost necessary to motivate users to sell products (with coupons) instead of transfering S coupons.
+    * Using this cost, S coupon crunched back to the system if transfer happens continuously without accepting coupons.
+    */
+    uint transferCostScoupon = 1;
 
     /* 
     * event to log coupon creation.
@@ -84,4 +97,60 @@ contract FedCoupLedger is MintableToken, ResidualCouponDist, CouponTransferCost 
     */
     event TransferResidual_S_coupons(address indexed from, address indexed to, uint value);    
 
+    address public fedCoupContract;
+
+    modifier onlyFedCoup() {
+        if (msg.sender != fedCoupContract) {
+          throw;
+        }
+        _;
+    }
+
+    function getConstantCouponDivFactor() constant external returns (uint) {
+        return constant_coupon_div_factor; 
+    }    
+
+    function getTokenBalances(address _addr) constant external returns (uint) {
+        return balances[ _addr ]; 
+    }
+
+    function addTokenBalances(address _to, uint _numberOfTokens) onlyPayloadSize(2 * 32) onlyFedCoup external {
+        balances[ _to ] = balances[ _to ].add( _numberOfTokens );
+    }
+
+    function subTokenBalances(address _from, uint _numberOfTokens) onlyPayloadSize(2 * 32) onlyFedCoup external {
+        balances[ _from ] = balances[ _from ].sub( _numberOfTokens );
+    }
+
+    function getBcouponBalances(address _addr) constant external returns (uint) {
+        return balance_B_coupons[ _addr ];
+    }
+
+    function addBcouponBalances(address _to, uint _numberOfBcoupons) onlyPayloadSize(2 * 32) onlyFedCoup external {
+        balance_B_coupons[ _to ] = balance_B_coupons[ _to ].add( _numberOfBcoupons );
+    }
+
+    function subBcouponBalances(address _from, uint _numberOfBcoupons) onlyPayloadSize(2 * 32) onlyFedCoup external {
+        balance_B_coupons[ _from ] = balance_B_coupons[ _from ].sub( _numberOfBcoupons );
+    }
+
+    function getScouponBalances(address _addr) constant external returns (uint) {
+        return balance_S_coupons[ _addr ];
+    } 
+
+    function addScouponBalances(address _to, uint _numberOfScoupons) onlyPayloadSize(2 * 32) onlyFedCoup external {
+        balance_S_coupons[ _to ] = balance_S_coupons[ _to ].add( _numberOfScoupons );
+    }
+
+    function subScouponBalances(address _from, uint _numberOfScoupons) onlyPayloadSize(2 * 32) onlyFedCoup external {
+        balance_S_coupons[ _from ] = balance_S_coupons[ _from ].sub( _numberOfScoupons );
+    }
+
+    function logCouponCreationEvent(address _addr, uint _numberOfBcoupons, uint _numberOfScoupons) onlyPayloadSize(2 * 32) onlyFedCoup external {
+        CouponsCreated(msg.sender, _numberOfBcoupons, _numberOfScoupons);
+    }
+
+    function logAcceptBcouponsEvent(address _from, address _to, uint _numberOfBcoupons) onlyPayloadSize(2 * 32) onlyFedCoup external {
+        Accept_B_coupons(_from, _to, _numberOfBcoupons);
+    }
 }
