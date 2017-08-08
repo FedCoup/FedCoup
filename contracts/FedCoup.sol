@@ -45,22 +45,18 @@ contract FedCoup is Ownable {
         *  
         *  Formula: number of B coupons =
         *  
-        *                 given _numberOfTokens
-        *          ----------------------------------      
-        *               constant_coupon_div_factor  
+        *                B coupon allocation factor * given _numberOfTokens * constant_coupon_div_factor
         */
-        uint  newBcoupons = _numberOfTokens.div( fedCoupLedger.getConstantCouponDivFactor() );
+        uint  newBcoupons = fedCoupLedger.getBcouponAllocationFactor().mul( _numberOfTokens.mul( fedCoupLedger.getConstantCouponDivFactor() ));
 
         /* 
         *  S coupon creation for given _numberOfTokens 
         * 
         *  Formula: number of S coupons =
         * 
-        *                given _numberOfTokens
-        *            ----------------------------   
-        *             constant_coupon_div_factor
+        *               S coupon allocation factor * given _numberOfTokens * constant_coupon_div_factor
         */
-        uint  newScoupons = _numberOfTokens.div( fedCoupLedger.getConstantCouponDivFactor() );
+        uint  newScoupons = fedCoupLedger.getBcouponAllocationFactor().mul( _numberOfTokens.mul( fedCoupLedger.getConstantCouponDivFactor() ));
 
 
         /* 
@@ -124,29 +120,32 @@ contract FedCoup is Ownable {
         /*
         * substract _numberOfBcoupons from sender account.
         */
-        fedCoupLedger.balance_B_coupons[msg.sender] = fedCoupLedger.balance_B_coupons[msg.sender].sub(_numberOfBcoupons);
+        fedCoupLedger.subBcouponBalances(msg.sender, _numberOfBcoupons);
 
         /*
         * calculate transfer cost.
-        * Formula:
-        *            transferCost = (1/100) * _numberOfBcoupons 
+        * Formula:  B coupon transferCost =
+        *
+        *                    B coupon transfer cost (in percentage) * _numberOfBcoupons
+        *                   -----------------------------------------------------------
+        *                                            100 
         */
-        uint transferCost =  _numberOfBcoupons.div( 100 ).mul(fedCoupLedger.getBcouponTransferCost());
+        uint transferCost =  _numberOfBcoupons.mul(fedCoupLedger.getBcouponTransferCost()).div( 100 );
 
         /*
         * add transfer cost to residual B coupons.
         */
-        fedCoupLedger.residualBcoupons = fedCoupLedger.residualBcoupons.add(transferCost);
+        fedCoupLedger.addResidualBcouponBalances(transferCost);
 
         /*
         * subtract transfer cost from given _numberOfBcoupons and add it to the TO account.
         */
-        fedCoupLedger.balance_B_coupons[_to] = fedCoupLedger.balance_B_coupons[_to].add( _numberOfBcoupons.sub(transferCost) );
+        fedCoupLedger.addBcouponBalances(_to, _numberOfBcoupons.sub(transferCost));        
 
         /* 
         * log event 
         */
-        fedCoupLedger.Transfer_B_coupons(msg.sender, _to, _numberOfBcoupons);
+        fedCoupLedger.logTransferBcouponsEvent(msg.sender, _to, _numberOfBcoupons);
     }
 
     /* 
@@ -157,13 +156,16 @@ contract FedCoup is Ownable {
         /*
         * substract _numberOfScoupons from sender account.
         */
-        fedCoupLedger.balance_S_coupons[msg.sender] = fedCoupLedger.balance_S_coupons[msg.sender].sub(_numberOfScoupons);
+        fedCoupLedger.subScouponBalances(msg.sender, _numberOfScoupons);
 
         /*
         * calculate transfer cost.
-        * Formula:
-        *            transferCost = (1/100) * _numberOfScoupons 
-        */
+        * Formula:  S coupon transferCost =
+        *
+        *                    S coupon transfer cost (in percentage) * _numberOfScoupons
+        *                   -----------------------------------------------------------
+        *                                            100 
+        */        
         uint transferCost =  _numberOfScoupons.div( 100 ).mul(fedCoupLedger.getScouponTransferCost());
 
         /*
@@ -179,7 +181,7 @@ contract FedCoup is Ownable {
         /* 
         * log event.
         */
-        fedCoupLedger.Transfer_S_coupons(msg.sender, _to, _numberOfScoupons);
+        fedCoupLedger.logTransferScouponsEvent(msg.sender, _to, _numberOfScoupons);
     }
 
     /*
@@ -200,7 +202,7 @@ contract FedCoup is Ownable {
         /* 
         * log event. 
         */
-        fedCoupLedger.TransferResidual_B_coupons(msg.sender, _to, _numberOfBcoupons);
+        fedCoupLedger.logTransferResidualBcouponsEvent(msg.sender, _to, _numberOfBcoupons);
     } 
  
     /*
@@ -222,7 +224,7 @@ contract FedCoup is Ownable {
         /* 
         * log event. 
         */
-        fedCoupLedger.TransferResidual_B_coupons(msg.sender, _to, _numberOfScoupons);
+        fedCoupLedger.logTransferResidualScouponsEvent(msg.sender, _to, _numberOfScoupons);
     }
 
    /*

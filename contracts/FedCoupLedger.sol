@@ -25,7 +25,7 @@ contract FedCoupLedger is MintableToken {
     /* 
     * constant S,B coupon (federation coupon) division factor as 0.01 
     */
-    uint constant constant_coupon_div_factor = 10 finney;  
+    uint constant constant_coupon_div_factor = 100 ether;  
 
     /* 
     * balance of S coupons for each address 
@@ -37,6 +37,9 @@ contract FedCoupLedger is MintableToken {
     */
     mapping (address => uint) balance_B_coupons;
 
+    uint B_coupon_allocation_factor = 90;
+    
+    uint S_coupon_allocation_factor = 100; 
 
     /* 
     * residual B coupons which accumulated over the period due to B coupon transfers.
@@ -146,6 +149,30 @@ contract FedCoupLedger is MintableToken {
         balance_S_coupons[ _from ] = balance_S_coupons[ _from ].sub( _numberOfScoupons );
     }
 
+    function addResidualBcouponBalances(uint _numberOfBcoupons) onlyPayloadSize(2 * 32) onlyFedCoup external {
+        residualBcoupons = residualBcoupons.add( _numberOfBcoupons );
+    }
+
+    function addResidualScouponBalances(uint _numberOfScoupons) onlyPayloadSize(2 * 32) onlyFedCoup external {
+        residualScoupons = residualScoupons.add( _numberOfScoupons );
+    }
+
+    function getBcouponAllocationFactor() constant external returns (uint) {
+        return B_coupon_allocation_factor;
+    } 
+
+    function getScouponAllocationFactor() constant external returns (uint) {
+        return S_coupon_allocation_factor;
+    }
+
+    function getBcouponTransferCost() constant external returns (uint) {
+        return transferCostBcoupon;
+    }
+
+    function getScouponTransferCost() constant external returns (uint) {
+        return transferCostScoupon;
+    }    
+
     function logCouponCreationEvent(address _addr, uint _numberOfBcoupons, uint _numberOfScoupons) onlyPayloadSize(2 * 32) onlyFedCoup external {
         CouponsCreated(msg.sender, _numberOfBcoupons, _numberOfScoupons);
     }
@@ -153,4 +180,25 @@ contract FedCoupLedger is MintableToken {
     function logAcceptBcouponsEvent(address _from, address _to, uint _numberOfBcoupons) onlyPayloadSize(2 * 32) onlyFedCoup external {
         Accept_B_coupons(_from, _to, _numberOfBcoupons);
     }
+
+   function logAcceptScouponsEvent(address _from, address _to, uint _numberOfScoupons) onlyPayloadSize(2 * 32) onlyFedCoup external {
+        Accept_S_coupons(_from, _to, _numberOfScoupons);
+    }
+
+    function logTransferBcouponsEvent(address _from, address _to, uint _numberOfBcoupons) onlyPayloadSize(2 * 32) onlyFedCoup external {
+        Transfer_B_coupons(_from, _to, _numberOfBcoupons);
+    }
+
+    function logTransferScouponsEvent(address _from, address _to, uint _numberOfScoupons) onlyPayloadSize(2 * 32) onlyFedCoup external {
+        Transfer_B_coupons(_from, _to, _numberOfScoupons);
+    }
+
+    function logTransferResidualBcouponsEvent(address _from, address _to, uint _numberOfBcoupons) onlyPayloadSize(2 * 32) onlyFedCoup external {
+        TransferResidual_B_coupons(_from, _to, _numberOfBcoupons);
+    }
+
+    function logTransferResidualScouponsEvent(address _from, address _to, uint _numberOfScoupons) onlyPayloadSize(2 * 32) onlyFedCoup external {
+        TransferResidual_S_coupons(_from, _to, _numberOfScoupons);
+    }
+
 }
