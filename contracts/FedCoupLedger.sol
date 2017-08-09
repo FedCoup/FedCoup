@@ -153,8 +153,16 @@ contract FedCoupLedger is MintableToken {
         residualBcoupons = residualBcoupons.add( _numberOfBcoupons );
     }
 
+    function subResidualBcouponBalances(uint _numberOfBcoupons) onlyPayloadSize(2 * 32) onlyFedCoup external {
+        residualBcoupons = residualBcoupons.sub( _numberOfBcoupons );
+    }
+
     function addResidualScouponBalances(uint _numberOfScoupons) onlyPayloadSize(2 * 32) onlyFedCoup external {
         residualScoupons = residualScoupons.add( _numberOfScoupons );
+    }
+
+    function subResidualScouponBalances(uint _numberOfScoupons) onlyPayloadSize(2 * 32) onlyFedCoup external {
+        residualScoupons = residualScoupons.sub( _numberOfScoupons );
     }
 
     function getBcouponAllocationFactor() constant external returns (uint) {
@@ -173,8 +181,8 @@ contract FedCoupLedger is MintableToken {
         return transferCostScoupon;
     }    
 
-    function logCouponCreationEvent(address _addr, uint _numberOfBcoupons, uint _numberOfScoupons) onlyPayloadSize(2 * 32) onlyFedCoup external {
-        CouponsCreated(msg.sender, _numberOfBcoupons, _numberOfScoupons);
+    function logCouponCreationEvent(address _sender, uint _numberOfBcoupons, uint _numberOfScoupons) onlyPayloadSize(2 * 32) onlyFedCoup external {
+        CouponsCreated( _sender, _numberOfBcoupons, _numberOfScoupons);
     }
 
     function logAcceptBcouponsEvent(address _from, address _to, uint _numberOfBcoupons) onlyPayloadSize(2 * 32) onlyFedCoup external {

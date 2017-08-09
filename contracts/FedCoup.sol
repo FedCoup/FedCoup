@@ -171,12 +171,12 @@ contract FedCoup is Ownable {
         /*
         * add transfer cost to residual S coupons.
         */
-        fedCoupLedger.residualScoupons = fedCoupLedger.residualScoupons.add(transferCost);
+        fedCoupLedger.addResidualScouponBalances( transferCost );        
 
         /*
-        * subtract transfer cost from given _numberOfBcoupons and add it to the TO account.
+        * subtract transfer cost from given _numberOfScoupons and add it to the TO account.
         */
-        fedCoupLedger.balance_S_coupons[_to] = fedCoupLedger.balance_S_coupons[_to].add(_numberOfScoupons.sub(transferCost));
+        fedCoupLedger.addScouponBalances( _to, _numberOfScoupons.sub(transferCost) );
 
         /* 
         * log event.
@@ -192,12 +192,12 @@ contract FedCoup is Ownable {
         /*
         * substract transfered _numberOfBcoupons from sender's account.
         */      
-        fedCoupLedger.residualBcoupons = fedCoupLedger.residualBcoupons.sub( _numberOfBcoupons );
+        fedCoupLedger.subResidualBcouponBalances( _numberOfBcoupons );
 
         /*
         * add _numberOfBcoupons to receiver's account.
         */
-        fedCoupLedger.balance_B_coupons[_to] = fedCoupLedger.balance_B_coupons[_to].add(_numberOfBcoupons);
+        fedCoupLedger.addBcouponBalances( _to, _numberOfBcoupons);
 
         /* 
         * log event. 
@@ -213,13 +213,13 @@ contract FedCoup is Ownable {
 
         /*
         * substract transfered _numberOfScoupons from sender's account.
-        */ 
-        fedCoupLedger.residualScoupons = fedCoupLedger.residualScoupons.sub( _numberOfScoupons );
+        */
+        fedCoupLedger.subResidualScouponBalances( _numberOfScoupons ); 
 
         /*
         * add _numberOfScoupons to receiver's account.
         */
-        fedCoupLedger.balance_S_coupons[_to] = fedCoupLedger.balance_S_coupons[_to].add( _numberOfScoupons );
+        fedCoupLedger.addScouponBalances( _to, _numberOfScoupons);
 
         /* 
         * log event. 
@@ -227,60 +227,12 @@ contract FedCoup is Ownable {
         fedCoupLedger.logTransferResidualScouponsEvent(msg.sender, _to, _numberOfScoupons);
     }
 
-   /*
-    * Get balance of residual B coupons.
-    */
-    function getBalanceOfResidualBcoupons() constant returns(uint residualBcoupons) {
-        return fedCoupLedger.residualBcoupons;
-    }
-
-    /*
-    * Get balance of residual S coupons.
-    */
-    function getBalanceOfResidualScoupons() constant returns(uint residualScoupons) {
-        return fedCoupLedger.residualScoupons;
-    }
-
-    /*
-    * Get balance of S coupons.
-    */
-    function balanceOf_S_coupons(address _owner) constant returns (uint Sbalance) {
-        return fedCoupLedger.balance_S_coupons[_owner];
-    }
-
-    /*
-    * Get balance of B coupons.
-    */
-    function balanceOf_B_coupons(address _owner) constant returns (uint Bbalance) {
-        return fedCoupLedger.balance_B_coupons[_owner];
-    }    
-
-    /*
-    * 
-    */
-    function setBcouponTransferCost(uint cost) onlyOwner {
-        fedCoupLedger.transferCostBcoupon = cost; 
-    }
-
+ 
     /*
     *
     */
-    function setScouponTransferCost(uint cost) onlyOwner {
-        fedCoupLedger.transferCostScoupon = cost;
-    }
-
-    /*
-    * 
-    */
-    function getBcouponTransferCost() constant returns (uint) {
-        return fedCoupLedger.transferCostBcoupon;
-    }
-
-    /*
-    *
-    */
-    function getScouponTransferCost() constant returns (uint) {
-        return fedCoupLedger.transferCostScoupon;
-    }
+    // function setScouponTransferCost(uint cost) onlyOwner {
+    //     fedCoupLedger.transferCostScoupon = cost;
+    // }
 
 }
