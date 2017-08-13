@@ -26,7 +26,7 @@ contract FedCoup is StandardToken, Ownable {
     /* 
     * constant S,B coupon (federation coupon) division factor as 0.01 
     */
-    uint constant constant_coupon_mul_factor = 100;  
+    uint coupon_mul_factor = 100;  
 
     /* 
     * balance of S coupons for each address 
@@ -37,6 +37,8 @@ contract FedCoup is StandardToken, Ownable {
     * balance of B coupons for each address 
     */
     mapping (address => uint) balance_B_coupons;
+
+    mapping (address => mapping (address => uint)) allowed_B_coupons;
 
     uint B_coupon_allocation_factor = 90;
     
@@ -101,9 +103,11 @@ contract FedCoup is StandardToken, Ownable {
     */
     event TransferResidual_S_coupons(address indexed from, address indexed to, uint value);    
 
+    event ApprovalBcoupons(address indexed owner, address indexed acceptor, uint value);
+
     /* 
-    * Create tokens for given FCC. 
-    *         _FCC : given FedCoup curreny (1FCC equal to 1 ether with respect to number format)
+    * Create tokens for given number of FedCoup tokens. 
+    *         _numberOfTokens : given FedCoup token (1 FedCoup token equal to 1 ether with respect to number format)
     */
     function createCoupons(uint _numberOfTokens) onlyPayloadSize(2 * 32) {
 
@@ -115,18 +119,18 @@ contract FedCoup is StandardToken, Ownable {
         *  
         *  Formula: number of B coupons =
         *  
-        *                B coupon allocation factor * given _numberOfTokens * constant_coupon_mul_factor
+        *                B coupon allocation factor * given _numberOfTokens * coupon_mul_factor
         */
-        uint  newBcoupons = B_coupon_allocation_factor.mul( _numberOfTokens.mul( constant_coupon_mul_factor ));
+        uint  newBcoupons = B_coupon_allocation_factor.mul( _numberOfTokens.mul( coupon_mul_factor ));
 
         /* 
         *  S coupon creation for given _numberOfTokens 
         * 
         *  Formula: number of S coupons =
         * 
-        *               S coupon allocation factor * given _numberOfTokens * constant_coupon_mul_factor
+        *               S coupon allocation factor * given _numberOfTokens * coupon_mul_factor
         */
-        uint  newScoupons = S_coupon_allocation_factor.mul( _numberOfTokens.mul( constant_coupon_mul_factor ));
+        uint  newScoupons = S_coupon_allocation_factor.mul( _numberOfTokens.mul( coupon_mul_factor ));
 
 
         /* 
@@ -147,6 +151,8 @@ contract FedCoup is StandardToken, Ownable {
     */
     function accept_B_coupons(address _from, uint _numberOfBcoupons) onlyPayloadSize(2 * 32) {
         
+        var _allowance = allowed_B_coupons[_from][msg.sender];
+
         /* 
         * substract B coupons from the giver account.
         */
@@ -158,21 +164,26 @@ contract FedCoup is StandardToken, Ownable {
         balance_S_coupons[ msg.sender ] = balance_S_coupons[ msg.sender ].sub( _numberOfBcoupons );
 
         /* 
-        * convert accepted B coupons into FCC equivalent and add it to sender balance.
+        * convert accepted B coupons into equivalent FedCoup tokens and add it to sender balance.
         * 
         *  Formula: number of tokens =
         *  
         *                _numberOfBcoupons
         *          ------------------------------      
-        *            constant_coupon_mul_factor
+        *                coupon_mul_factor
         *            
         */
-        uint _numberOfTokens = _numberOfBcoupons.div( constant_coupon_mul_factor );
+        uint _numberOfTokens = _numberOfBcoupons.div( coupon_mul_factor );
 
         /*
         * add calcualated tokens to acceptor's account.
         */
         balances[ msg.sender ] = balances[ msg.sender ].add( _numberOfTokens );
+
+        /*
+        * substract allowed_B_coupons for the accepted _numberOfBcoupons.
+        */
+        allowed_B_coupons[_from][msg.sender] = _allowance.sub(_numberOfBcoupons);
 
         /* 
         * log event. 
@@ -297,9 +308,28 @@ contract FedCoup is StandardToken, Ownable {
         TransferResidual_B_coupons(msg.sender, _to, _numberOfScoupons);
     }
 
-    function getConstantCouponMulFactor() constant external returns (uint) {
-        return constant_coupon_mul_factor; 
+    /*
+    * 
+    */
+    function approveBcoupons(address _acceptor, uint _value) {
+        allowed_B_coupons[msg.sender][_acceptor] = _value;
+        ApprovalBcoupons(msg.sender, _acceptor, _value);
     }    
+
+    /*
+    *
+    */
+    function allowanceBcoupons(address _owner, address _acceptor) constant external returns (uint remaining) {
+        return allowed_B_coupons[_owner][_acceptor];
+    }
+
+    function getCouponMulFactor() constant external returns (uint) {
+        return coupon_mul_factor; 
+    }    
+
+    function setCouponMulFactor(uint couponMulFactor) external onlyOwner {
+        coupon_mul_factor = couponMulFactor; 
+    } 
 
     function getTokenBalances(address _addr) constant external returns (uint) {
         return balances[ _addr ]; 
@@ -309,17 +339,33 @@ contract FedCoup is StandardToken, Ownable {
         return B_coupon_allocation_factor;
     } 
 
+    function setBcouponAllocationFactor(uint BcouponAllocFactor) external onlyOwner {
+        B_coupon_allocation_factor = BcouponAllocFactor;
+    } 
+
     function getScouponAllocationFactor() constant external returns (uint) {
         return S_coupon_allocation_factor;
+    }
+
+    function setScouponAllocationFactor(uint ScouponAllocFactor) external onlyOwner {
+        S_coupon_allocation_factor = ScouponAllocFactor;
     }
 
     function getBcouponTransferCost() constant external returns (uint) {
         return transferCostBcoupon;
     }
 
+    function setBcouponTransferCost(uint transferCostBcoup) external onlyOwner {
+        transferCostBcoupon = transferCostBcoup;
+    }    
+
     function getScouponTransferCost() constant external returns (uint) {
         return transferCostScoupon;
     }     
+
+    function setScouponTransferCost(uint transferCostScoup) external onlyOwner {
+        transferCostScoupon = transferCostScoup;
+    }
 
     function getBcouponBalances(address _addr) constant external returns (uint) {
         return balance_B_coupons[ _addr ];
@@ -327,5 +373,9 @@ contract FedCoup is StandardToken, Ownable {
 
     function getScouponBalances(address _addr) constant external returns (uint) {
         return balance_S_coupons[ _addr ];
-    }     
+    }   
+
+    function getBalanceOfResidualBcoupons() constant external returns (uint) {
+        return residualBcoupons;
+    }        
 }

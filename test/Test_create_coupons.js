@@ -13,7 +13,7 @@ contract('FedCoup', function(accounts) {
   /* test B coupons initialization */
   it("B coupons should print 0 for first time", function() {
     return FedCoup.deployed().then(function(instance) {
-      return instance.balanceOf_B_coupons.call(accounts[0]);
+      return instance.getBcouponBalances(accounts[0]);
     }).then(function( Bcoupons ) {
       assert.equal(Bcoupons.valueOf(), 0, "0 wasn't in the B coupons for first time");
     });
@@ -22,7 +22,7 @@ contract('FedCoup', function(accounts) {
     /* test S coupons initialization */
   it("S coupons should print 0 for first time", function() {
     return FedCoup.deployed().then(function(instance) {
-      return instance.balanceOf_S_coupons.call(accounts[0]);
+      return instance.getScouponBalances(accounts[0]);
     }).then(function( Scoupons ) {
       assert.equal(Scoupons.valueOf(), 0, "0 wasn't in the S coupons for first time");
     });
@@ -49,13 +49,13 @@ contract('FedCoup', function(accounts) {
         assert(true, "Throw expected when transfer B coupons when 0 B balance");
         //accounts[0] B balance should be 0
         FedCoup.deployed().then(function(instance) {
-          return instance.balanceOf_B_coupons.call(accounts[0]);
+          return instance.getBcouponBalances.call(accounts[0]);
         }).then(function( Bbalance ) {
           assert.equal(Bbalance.valueOf(), 0, "account[0] - 0 wasn't in the B coupons after with initial 0 B balance");  
         });
         //accounts[1] B balance should be 0
         FedCoup.deployed().then(function(instance) {
-          return instance.balanceOf_B_coupons.call(accounts[1]);
+          return instance.getBcouponBalances.call(accounts[1]);
         }).then(function( Bbalance ) {
           assert.equal(Bbalance.valueOf(), 0, "account[1] - 0 wasn't in the B coupons after with initial 0 B balance");  
         });
@@ -77,13 +77,13 @@ contract('FedCoup', function(accounts) {
         assert(true, "Throw expected when accept B coupons when 0 B balance in beneficiary account");
         //accounts[0] B balance should be 0
         FedCoup.deployed().then(function(instance) {
-          return instance.balanceOf_B_coupons.call(accounts[0]);
+          return instance.getBcouponBalances.call(accounts[0]);
         }).then(function( Bbalance ) {
           assert.equal(Bbalance.valueOf(), 0, "account[0] - 0 wasn't in the B coupons after with initial 0 B balance");  
         });
         //accounts[0] S balance should be 0
         FedCoup.deployed().then(function(instance) {
-          return instance.balanceOf_S_coupons.call(accounts[0]);
+          return instance.getScouponBalances.call(accounts[0]);
         }).then(function( Sbalance ) {
           assert.equal(Sbalance.valueOf(), 0, "account[0] - 0 wasn't in the S coupons after with initial 0 S balance");  
         });    
@@ -107,13 +107,13 @@ contract('FedCoup', function(accounts) {
   });  
 
   /* test residual B coupons initialization */
-  it("create coupons should print", function() {
-    return FedCoup.deployed().then(function(instance) {
-      return instance.getBalanceOfResidualBcoupons.call();
-    }).then(function( residualBcoupons ) {
-      assert.equal(residualBcoupons.valueOf(), 0, "0 wasn't in the residual B coupons for first time");
-    });
-  });
+  // it("create coupons should print", function() {
+  //   return FedCoup.deployed().then(function(instance) {
+  //     return instance.getBalanceOfResidualBcoupons.call();
+  //   }).then(function( residualBcoupons ) {
+  //     assert.equal(residualBcoupons.valueOf(), 0, "0 wasn't in the residual B coupons for first time");
+  //   });
+  // });
 
 
   /* test transfer B coupons first time */
