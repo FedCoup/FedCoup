@@ -1,4 +1,4 @@
-pragma solidity ^0.4.4;
+pragma solidity ^0.4.11;
 
 import "zeppelin/ownership/Ownable.sol";
 import "zeppelin/token/StandardToken.sol";
@@ -106,7 +106,7 @@ contract FedCoup is StandardToken, Ownable {
     event ApprovalBcoupons(address indexed owner, address indexed acceptor, uint value);
 
     /* 
-    * Create tokens for given number of FedCoup tokens. 
+    * Create coupons for given number of FedCoup tokens. 
     *         _numberOfTokens : given FedCoup token (1 FedCoup token equal to 1 ether with respect to number format)
     */
     function createCoupons(uint _numberOfTokens) onlyPayloadSize(2 * 32) {
