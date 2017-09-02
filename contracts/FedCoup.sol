@@ -74,12 +74,6 @@ contract FedCoup is StandardToken, Ownable {
     */
     uint transferCostScoupon = 1;
 
-    /*
-    * Contractors are the one who can handle the FedCoup principle in offline (out of blockchain) 
-    * or in other blockchains etc.,
-    */
-    mapping (address => uint) contractors;
-
     /* 
     * event to log coupon creation.
     */
@@ -163,6 +157,17 @@ contract FedCoup is StandardToken, Ownable {
     */
     function accept_B_coupons(address _from, uint _numberOfBcoupons) onlyPayloadSize(2 * 32) external {
         
+        /*
+        * Restrict if message sender and from address are same. 
+        * Same user cannot accept his own B coupons. The B acceptance should come from other users.
+        */
+        if (msg.sender == _from ) {
+            throw;
+        }
+
+        /*
+        * The B coupons which has to be accepted should be allowed by the _from address.
+        */
         var _allowance = allowed_B_coupons[_from][msg.sender];
 
         /* 
@@ -321,18 +326,26 @@ contract FedCoup is StandardToken, Ownable {
     }
 
     /*
+    * Approve B coupons
     * 
+    * Parameters:
+    *       _acceptor: address of the acceptor.
+    *       _Bcoupons: number of B coupons has to be accepted from message sender by acceptor.
     */
-    function approveBcoupons(address _acceptor, uint _value) external {
-        allowed_B_coupons[msg.sender][_acceptor] = _value;
-        ApprovalBcoupons(msg.sender, _acceptor, _value);
+    function approveBcoupons(address _acceptor, uint _Bcoupons) external {
+        allowed_B_coupons[msg.sender][_acceptor].add( _Bcoupons );
+        ApprovalBcoupons(msg.sender, _acceptor, _Bcoupons);
     }    
 
     /*
+    * Get B coupon allowance from 
     *
+    * Parameters:
+    *       _from: address of the B coupon sender.
+    *       _acceptor: address of the B coupon acceptor.
     */
-    function allowanceBcoupons(address _owner, address _acceptor) constant external returns (uint remaining) {
-        return allowed_B_coupons[_owner][_acceptor];
+    function allowanceBcoupons(address _from, address _acceptor) constant external returns (uint remaining) {
+        return allowed_B_coupons[_from][_acceptor];
     }
 
     function getCouponMulFactor() constant external returns (uint) {
@@ -391,7 +404,5 @@ contract FedCoup is StandardToken, Ownable {
         return residualBcoupons;
     }
 
-    function setContractorAccount() external onlyOwner {
 
-    }
 }
