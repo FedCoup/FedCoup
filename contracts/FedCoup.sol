@@ -40,7 +40,10 @@ contract FedCoup is StandardToken, Ownable {
 
     mapping (address => mapping (address => uint)) allowed_B_coupons;
 
-    uint B_coupon_allocation_factor = 90;
+    mapping (address => mapping (address => uint)) allowed_S_coupons;
+
+
+    uint B_coupon_allocation_factor = 50;
     
     uint S_coupon_allocation_factor = 100; 
 
@@ -111,13 +114,18 @@ contract FedCoup is StandardToken, Ownable {
 
     event ApprovalBcoupons(address indexed owner, address indexed acceptor, uint value);
 
+    event ApprovalScoupons(address indexed owner, address indexed receiver, uint value);
+
+
     /* 
     * Create coupons for given number of FedCoup tokens. 
     *         _numberOfTokens : given FedCoup token (1 FedCoup token equal to 1 ether with respect to number format)
     */
     function createCoupons(uint _numberOfTokens) onlyPayloadSize(2 * 32) external {
 
-        /* subtract given token from sender token balance */
+        /* 
+        * subtract given token from sender token balance 
+        */
         balances[ msg.sender ] = balances[ msg.sender ].sub( _numberOfTokens );
 
         /* 
@@ -145,13 +153,17 @@ contract FedCoup is StandardToken, Ownable {
         balance_B_coupons[ msg.sender ] = balance_B_coupons[ msg.sender ].add( newBcoupons );
         balance_S_coupons[ msg.sender ] = balance_S_coupons[ msg.sender ].add( newScoupons );
 
-        /* log event */
+        /* 
+        * log event 
+        */
         CouponsCreated(msg.sender, newBcoupons, newScoupons);
     }
 
 
     /*
     * accept B coupons.
+    *
+    * Parameters:
     *      _from : address of the coupon giver.
     *      _numberOfBcoupons : number of B coupons (1B coupon equal to 1 ether with respect to format)
     */
@@ -210,6 +222,8 @@ contract FedCoup is StandardToken, Ownable {
 
     /* 
     * Transfer B coupons. 
+    *
+    * Parameters:
     *       _to: To address where B coupons has to be send
     *       _numberOfBcoupons: number of B coupons (1 coupon equal to 1 ether)
     */
@@ -333,12 +347,40 @@ contract FedCoup is StandardToken, Ownable {
     *       _Bcoupons: number of B coupons has to be accepted from message sender by acceptor.
     */
     function approveBcoupons(address _acceptor, uint _Bcoupons) external {
-        allowed_B_coupons[msg.sender][_acceptor].add( _Bcoupons );
+
+        /*
+        * approve B coupons from message sender to acceptor.
+        */
+        allowed_B_coupons[msg.sender][_acceptor] = _Bcoupons;
+
+        /*
+        * log event.
+        */ 
         ApprovalBcoupons(msg.sender, _acceptor, _Bcoupons);
     }    
 
     /*
-    * Get B coupon allowance from 
+    * Approve S coupons
+    * 
+    * Parameters:
+    *       _receiver: address of the receiver.
+    *       _Scoupons: number of S coupons has to be allowed to receiver.
+    */
+    function approveScoupons(address _receiver, uint _Scoupons) external {
+
+        /*
+        * approve S coupons from message sender to receiver.
+        */
+        allowed_S_coupons[msg.sender][_receiver] = _Scoupons;
+
+        /*
+        * log event.
+        */ 
+        ApprovalScoupons(msg.sender, _receiver, _Scoupons);
+    }    
+
+    /*
+    * Get allowed B coupons from address to acceptor address.
     *
     * Parameters:
     *       _from: address of the B coupon sender.
@@ -348,61 +390,212 @@ contract FedCoup is StandardToken, Ownable {
         return allowed_B_coupons[_from][_acceptor];
     }
 
+    /*
+    * Get coupon multiplication factor.
+    */
     function getCouponMulFactor() constant external returns (uint) {
         return coupon_mul_factor; 
     }    
 
+    /*
+    * Set coupon multiplication factor.
+    *
+    * Parameters:
+    *       couponMulFactor: The number of coupons for 1 Federation token.
+    */
     function setCouponMulFactor(uint couponMulFactor) external onlyOwner {
         coupon_mul_factor = couponMulFactor; 
     } 
 
+    /*
+    * Get Federation token balance for given address.
+    * 
+    * Parameters:
+    *       _addr: The address for which the token balance has to be retrieved.
+    */
     function getTokenBalances(address _addr) constant external returns (uint) {
         return balances[ _addr ]; 
     }
 
+    /*
+    * Get B coupon allocation factor which indicates the percentage of 
+    * how many B coupons will be allocated to the user for given Federation token. 
+    */
     function getBcouponAllocationFactor() constant external returns (uint) {
         return B_coupon_allocation_factor;
     } 
 
+    /*
+    * Set B coupon allocation factor.
+    *
+    * Parameters:
+    *       BcouponAllocFactor: The B coupon allocation factor in percentage.
+    */
     function setBcouponAllocationFactor(uint BcouponAllocFactor) external onlyOwner {
         B_coupon_allocation_factor = BcouponAllocFactor;
     } 
 
+    /*
+    * Get S coupon allocation factor which indicates the percentage of 
+    * how many S coupons will be allocated to the user for given Federation token.
+    */
     function getScouponAllocationFactor() constant external returns (uint) {
         return S_coupon_allocation_factor;
     }
 
+    /*
+    * Set S coupon allocation factor.
+    *
+    * Parameters:
+    *       ScouponAllocFactor: The S coupon allocation factor in percentage.
+    */
     function setScouponAllocationFactor(uint ScouponAllocFactor) external onlyOwner {
         S_coupon_allocation_factor = ScouponAllocFactor;
     }
 
+    /*
+    * Get B coupon transfer cost. 
+    */
     function getBcouponTransferCost() constant external returns (uint) {
         return transferCostBcoupon;
     }
 
+    /*
+    * Set B coupon transfer cost.
+    *
+    * Parameters:
+    *       transferCostBcoup: The number B coupons deducted as cost for transfering them.
+    */
     function setBcouponTransferCost(uint transferCostBcoup) external onlyOwner {
         transferCostBcoupon = transferCostBcoup;
     }    
 
+    /*
+    * Get S coupon transfer cost.
+    */
     function getScouponTransferCost() constant external returns (uint) {
         return transferCostScoupon;
     }     
 
+    /*
+    * Set S coupon transfer cost.
+    */
     function setScouponTransferCost(uint transferCostScoup) external onlyOwner {
         transferCostScoupon = transferCostScoup;
     }
 
+    /*
+    * Get B coupon balance.
+    */
     function getBcouponBalances(address _addr) constant external returns (uint) {
         return balance_B_coupons[ _addr ];
     }
 
+    /*
+    * Get S coupon balance.
+    */
     function getScouponBalances(address _addr) constant external returns (uint) {
         return balance_S_coupons[ _addr ];
     }   
 
+    /*
+    * Get balance of residual B coupons.
+    */
     function getBalanceOfResidualBcoupons() constant external returns (uint) {
         return residualBcoupons;
     }
 
 
+    /*************************************************************************************************/
+    /* Contractors functions
+    /* ---------------------
+    /*      The contractor functions designed to support future contractor contracts.
+    /* These contractors might be out of the blockchain or out of the ethereum blockchain etc.
+    /* The contractors should follow the FedCoup principle wherever they are implemented. The below
+    /* list functions are the minimal set of functions which directly updates the coupons 
+    /* and tokens for the user. The contractor criteria will be established as a seperate contract. 
+    /**************************************************************************************************/
+
+    address public contractorImpl;
+
+    event ContractorTransferBcoupons(address indexed sender, address indexed receiver, uint numberOfBcoupons);
+
+    event ContractorTransferScoupons(address indexed sender, address indexed receiver, uint numberOfScoupons);
+
+
+    modifier onlyContractorImpl() {
+        if (msg.sender == contractorImpl) {
+            throw;
+        }
+        _;
+    }
+
+    function setContractorImpl(address _contractorImplAddr) onlyPayloadSize(2 * 32) onlyOwner {
+        contractorImpl = _contractorImplAddr;
+    }
+
+    function contractorTransfer_Bcoupon(address _to, uint _numberOfBcoupons) onlyPayloadSize(2 * 32) onlyContractorImpl external {
+        balance_B_coupons[msg.sender] = balance_B_coupons[msg.sender].sub(_numberOfBcoupons);
+        balance_B_coupons[_to] = balance_B_coupons[_to].add(_numberOfBcoupons);
+
+        /*
+        * log event.
+        */
+        ContractorTransferBcoupons(msg.sender, _to, _numberOfBcoupons);
+    }
+
+    function contractorTransferFrom_Bcoupon(address _from, address _to, uint _numberOfBcoupons) onlyPayloadSize(2 * 32) onlyContractorImpl external {
+        /*
+        * The B coupons which has to be allowed _from address to _to address.
+        */
+        var _allowance = allowed_B_coupons[_from][msg.sender];
+
+        /* 
+        * substract B coupons from _from account.
+        */
+        balance_B_coupons[ _from ] = balance_B_coupons[ _from ].sub( _numberOfBcoupons );
+
+        /*
+        * substract allowed_B_coupons for transfered _numberOfBcoupons.
+        */
+        allowed_B_coupons[_from][msg.sender] = _allowance.sub(_numberOfBcoupons);
+
+        /* 
+        * log event. 
+        */
+        ContractorTransferBcoupons(_from, _to, _numberOfBcoupons);
+
+    }
+
+    function contractorTransfer_Scoupon(address _to, uint _numberOfScoupons) onlyPayloadSize(2 * 32) onlyContractorImpl external {
+        balance_S_coupons[msg.sender] = balance_S_coupons[msg.sender].sub(_numberOfScoupons);
+        balance_S_coupons[_to] = balance_S_coupons[_to].add(_numberOfScoupons);
+
+        /*
+        * log event.
+        */
+        ContractorTransferScoupons(msg.sender, _to, _numberOfScoupons);
+    }
+
+    function contractorTransferFrom_Scoupon(address _from, address _to, uint _numberOfScoupons) onlyPayloadSize(2 * 32) onlyContractorImpl external {
+        /*
+        * The S coupons which has to be allowed _from address to _to address.
+        */
+        var _allowance = allowed_S_coupons[_from][msg.sender];
+
+        /* 
+        * substract S coupons from _from account.
+        */
+        balance_S_coupons[ _from ] = balance_S_coupons[ _from ].sub( _numberOfScoupons );
+
+        /*
+        * substract allowed_S_coupons for transfered _numberOfScoupons.
+        */
+        allowed_S_coupons[_from][msg.sender] = _allowance.sub(_numberOfScoupons);
+
+        /* 
+        * log event. 
+        */
+        ContractorTransferScoupons(_from, _to, _numberOfScoupons);
+    }    
 }
