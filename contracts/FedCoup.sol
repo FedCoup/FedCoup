@@ -9,8 +9,6 @@ import "zeppelin/token/StandardToken.sol";
 */
 contract FedCoup is StandardToken, Ownable {
 
-    using SafeMath for uint;
-
     /*
     * Name of the Federation Coupon System.
     */
@@ -19,7 +17,7 @@ contract FedCoup is StandardToken, Ownable {
     /* 
     * FedCoup currency symbol. 
     */
-    string public symbol = "FCC";
+    string public symbol = "FET";
 
     uint public decimals = 18; 
 
