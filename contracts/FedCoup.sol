@@ -512,6 +512,10 @@ contract FedCoup is StandardToken, Ownable {
     /* The contractors should follow the FedCoup principle wherever they are implemented. The below
     /* list functions are the minimal set of functions which directly updates the coupons 
     /* and tokens for the user. The contractor criteria will be established as a seperate contract. 
+    /* 
+    /* Contractor also responsible for initial coupon distribution to users without 
+    /* any transactio cost. These coupon distribution might be used to promote specific applications 
+    /* which also supports B, S coupons.
     /**************************************************************************************************/
 
     address public contractorImpl;
