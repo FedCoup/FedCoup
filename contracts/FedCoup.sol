@@ -280,7 +280,8 @@ contract FedCoup is StandardToken, Ownable {
     event ApprovalScoupons(address indexed owner, address indexed receiver, uint value);
 
     function FedCoup() {
-        balances[msg.sender] = 1000000000;
+       totalSupply = 1000000000 ether;
+       balances[msg.sender] = totalSupply;
     }
 
     /* 
