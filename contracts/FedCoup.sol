@@ -201,13 +201,24 @@ contract FedCoup is StandardToken, Ownable {
     */
     mapping (address => uint) balance_B_coupons;
 
+    /*
+    * B coupon allowance.
+    */
     mapping (address => mapping (address => uint)) allowed_B_coupons;
 
+    /*
+    * S coupon allowane.
+    */
     mapping (address => mapping (address => uint)) allowed_S_coupons;
 
-
+    /*
+    * The percentage of B coupon allocated while coupon creation. 
+    */
     uint B_coupon_allocation_factor = 50;
     
+    /*
+    * The percentage of S coupon allocated while coupon creation.
+    */
     uint S_coupon_allocation_factor = 100; 
 
     /*
