@@ -299,7 +299,7 @@ contract FedCoup is StandardToken, Ownable {
     * Create coupons for given number of FedCoup tokens. 
     *         _numberOfTokens : given FedCoup token (1 FedCoup token equal to 1 ether with respect to number format)
     */
-    function createCoupons(uint _numberOfTokens) onlyPayloadSize(2 * 32) external {
+    function createCoupons(uint _numberOfTokens)   {
 
         /* 
         * subtract given token from sender token balance 
@@ -311,18 +311,18 @@ contract FedCoup is StandardToken, Ownable {
         *  
         *  Formula: number of B coupons =
         *  
-        *                B coupon allocation factor * given _numberOfTokens * coupon_mul_factor
+        *                (B coupon allocation factor/100) * given _numberOfTokens * coupon_mul_factor
         */
-        uint  newBcoupons = B_coupon_allocation_factor.mul( _numberOfTokens.mul( coupon_mul_factor ));
+        uint  newBcoupons = B_coupon_allocation_factor.mul( _numberOfTokens.mul( coupon_mul_factor )).div(100);
 
         /* 
         *  S coupon creation for given _numberOfTokens 
         * 
         *  Formula: number of S coupons =
         * 
-        *               S coupon allocation factor * given _numberOfTokens * coupon_mul_factor
+        *               (S coupon allocation factor/100) * given _numberOfTokens * coupon_mul_factor
         */
-        uint  newScoupons = S_coupon_allocation_factor.mul( _numberOfTokens.mul( coupon_mul_factor ));
+        uint  newScoupons = S_coupon_allocation_factor.mul( _numberOfTokens.mul( coupon_mul_factor )).div(100);
 
 
         /* 
@@ -335,6 +335,7 @@ contract FedCoup is StandardToken, Ownable {
         * log event 
         */
         CouponsCreated(msg.sender, newBcoupons, newScoupons);
+
     }
 
 
