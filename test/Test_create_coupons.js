@@ -80,11 +80,10 @@ contract('FedCoup', function(accounts) {
     })
   });
 
- 
-  /* test coupon creation after changing coupon allocation factor */
-  it("should add 500B coupons to accounts[0] for given 10 FET token", function() {
+    /* test coupon creation for 0 value */
+  it("should add 0B coupons to accounts[0] for given 0 FET token", function() {
     return fedCoupInstance.then(function(instance) {
-        return instance.createCoupons(10000000000000000000);
+        return instance.createCoupons(0);
     }).then(function(txHash) {
       return fedCoupInstance.then(function(instance){
         //600B should be in account[0]
@@ -101,6 +100,32 @@ contract('FedCoup', function(accounts) {
         })        
       })
     })
+  });
+
+      /* test coupon creation for negative value */
+  it("should add 0B coupons to accounts[0] for given -1 FET token", function() {
+    return fedCoupInstance.then(function(instance) {
+        return instance.createCoupons(-1);
+    }).catch(function(error){
+      console.log("err:" + error);
+    })
+
+  //   .then(function(txHash) {
+  //     return fedCoupInstance.then(function(instance){
+  //       //600B should be in account[0]
+  //       instance.getBcouponBalances.call(accounts[0]).then(function(noOfBcoupons){
+  //         assert.equal(noOfBcoupons.valueOf(), 6e+20, "600B coupons in accounts[0] is not reflected");
+  //       }).catch(function(error){
+  //         console.log(error);
+  //       })
+  //       //1200S should be in account[0]
+  //       instance.getScouponBalances.call(accounts[0]).then(function(noOfScoupons){
+  //         assert.equal(noOfScoupons.valueOf(), 12e+20, "1200S coupons in accounts[0] is not reflected");
+  //       }).catch(function(error){
+  //         console.log(error);
+  //       })        
+  //     })
+  //   })
   });
 
 });
